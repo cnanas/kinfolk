@@ -64,5 +64,6 @@ UI\Pages\Leveling.lua
 UI\Welcome.lua
 UI\CopyRun.lua
 UI\LevelUp.lua
+UI\Tracker.lua
 UI\MapPins.lua
 UI\Settings.lua

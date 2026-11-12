@@ -86,7 +86,10 @@ local r3 = add(UI.Toggle(panel, CONTENT_W, "Sync reminder",
 local r4 = add(UI.Toggle(panel, CONTENT_W, "Show the copy box after runs",
   "If you don't run the companion app: the run, ready to paste on the guild website.", get("copyPopup"), set("copyPopup")), r3)
 
-local sL = section("Leveling", r4)
+local r5 = add(UI.Toggle(panel, CONTENT_W, "Dungeon tracker",
+  "A small window in dungeons: time inside, XP gained, gold looted and which bosses are down.", get("tracker"), function(v) ns.settings.tracker = v; if ns.RefreshTracker then ns.RefreshTracker() end end), r4)
+
+local sL = section("Leveling", r5)
 local rL1 = add(UI.Toggle(panel, CONTENT_W, "Show the level-up card",
   "Your gains, how long the level took, what's new at your trainer and guildmates near your level.", get("levelCard"), set("levelCard")), sL, true)
 local rL2 = add(UI.Toggle(panel, CONTENT_W, "Tell the guild when I level up",

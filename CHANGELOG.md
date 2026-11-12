@@ -2,6 +2,8 @@
 
 ## 2.2.0
 
+- **Dungeon tracker:** a small window while you're in a dungeon: time inside, XP gained, gold looted, and the dungeon's bosses (grey until killed). Drag it anywhere; turn it off in Settings or with `/fox tracker`. XP and gold are saved with the run.
+- Cities that are instances (like Dalaran) are no longer logged as dungeons, and walking in and out without a fight isn't saved.
 - **Trainer page:** visit your class trainer once and Foxden keeps its whole list: what you can learn now, what's coming and at which level, and the cost. Right-click to skip an ability. A **Learn all** button at the trainer learns everything you haven't skipped.
 - **Level-up card:** your stat gains, how long the level took (and your fastest), what's new at your trainer, and guildmates near your level who are online. `/fox levelup` shows a preview.
 - **Guild dings:** guildmates with Foxden see a small note when you level up, and you see theirs. Both can be turned off in Settings.

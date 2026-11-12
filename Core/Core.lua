@@ -10,7 +10,7 @@ local ADDON, ns = ...
 -- that owns the changed data to upgrade older runs in its Migrate hook.
 ns.SCHEMA = 3
 
-ns.DEFAULTS = { track = true, chat = true, remind = true, keep = 100, scale = 1, share = true, offer = false, shareLocation = true, welcomed = false, copyPopup = true, levelCard = true, shareLevelUps = true, guildDings = true, learnAll = true, levelScreenshot = false }
+ns.DEFAULTS = { track = true, chat = true, remind = true, keep = 100, scale = 1, share = true, offer = false, shareLocation = true, welcomed = false, copyPopup = true, levelCard = true, shareLevelUps = true, guildDings = true, learnAll = true, levelScreenshot = false, tracker = true }
 ns.settings = setmetatable({}, { __index = ns.DEFAULTS }) -- replaced at load
 
 local db, run
@@ -125,8 +125,27 @@ local function prune()
 end
 ns.Prune = prune
 
+-- Is this instance a real dungeon? true / false / nil (can't tell yet). Some places,
+-- like Dalaran on Forever, are 5-player instances but not dungeons; the game's
+-- dungeon journal knows the difference.
+local function isDungeon(name)
+  local okM, map = pcall(C_Map.GetBestMapForUnit, "player")
+  if EJ_GetInstanceForMap and okM and type(map) == "number" and not ns.IsSecret(map) then
+    local okJ, jid = pcall(EJ_GetInstanceForMap, map)
+    if okJ and type(jid) == "number" and jid > 0 then return true end
+  end
+  local list = db.journal and db.journal.dungeons
+  if type(list) == "table" and #list > 0 then
+    local want = ns.Slug and ns.Slug(name)
+    for _, d in ipairs(list) do if ns.Slug and ns.Slug(d.name) == want then return true end end
+    return false
+  end
+  return nil
+end
+
 local function startRun(name, difficultyName, instanceID)
   local now = GetServerTime()
+  local dungeon = isDungeon(name)
   run = {
     id = string.format("%d-%s", now, tostring(instanceID)),
     schema = ns.SCHEMA,
@@ -137,9 +156,10 @@ local function startRun(name, difficultyName, instanceID)
     loggedBy = UnitName("player"),
     addonVersion = (C_AddOns and C_AddOns.GetAddOnMetadata or GetAddOnMetadata)(ADDON, "Version"),
   }
+  run._notDungeon = dungeon == false or nil
   db.current = run
   fire("OnRunStart", run)
-  say("Run started: " .. name .. ". Good luck in there!")
+  if dungeon ~= false then say("Run started: " .. name .. ". Good luck in there!") end
   ns.Changed()
 end
 
@@ -158,6 +178,15 @@ local function finishRun(reason)
   if InCombatLockdown() then run.pendingFinish = reason; return end
   fire("OnRunFinish", run)
   local r = run
+  -- not worth keeping: a city that's an instance (Dalaran), or walking in and out
+  -- without a fight. Nothing is saved, posted or relayed.
+  local bosses = r.bosses and #r.bosses or 0
+  if bosses == 0 and (r._notDungeon or (r.combatSeconds or 0) < 20) then
+    db.current, run = nil, nil
+    if not r._notDungeon then say("Left " .. r.dungeon .. " without a fight, so the run wasn't saved.") end
+    ns.Changed()
+    return
+  end
   saveRun(r, reason, GetServerTime())
   db.current, run = nil, nil
   fire("OnRunSaved", r)
@@ -256,6 +285,10 @@ SlashCmdList.FOXDEN = function(msg)
     if ns.MapTest then ns.MapTest() end
   elseif msg == "levelup" then
     if ns.ShowLevelUp then ns.ShowLevelUp(UnitLevel("player"), { str = 3, agi = 2, sta = 4, int = 1, spi = 1, hp = 22, mp = 30 }, 2700, true) end
+  elseif msg == "tracker" then
+    ns.settings.tracker = ns.settings.tracker == false
+    say("Dungeon tracker " .. (ns.settings.tracker and "on." or "off."), true)
+    if ns.RefreshTracker then ns.RefreshTracker() end
   elseif msg == "trainer" then
     if ns.OpenPage then ns.OpenPage("trainer") end
   elseif msg == "copy" then
