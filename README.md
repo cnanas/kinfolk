@@ -16,8 +16,8 @@ The first time you log in, Kinfolk asks what you want to share. Nothing is sent 
 
 ## Install
 
-1. Download this repository and copy the `Kinfolk` folder into your AddOns folder:
-   `World of Warcraft/_forever_/Interface/AddOns/Kinfolk`
+1. Get Kinfolk from CurseForge or Wago (any addon manager works), or download `Kinfolk-<version>.zip` from this repository's Releases and unzip it into:
+   `World of Warcraft/_forever_/Interface/AddOns/`
    The path should end in `AddOns/Kinfolk/Kinfolk.toc`.
 2. Launch the game and make sure **Kinfolk** is enabled in the AddOns list.
 3. If the AddOns list says it's out of date, check **Load out of date AddOns**.

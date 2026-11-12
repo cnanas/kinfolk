@@ -1,0 +1,7 @@
+package-as: Kinfolk
+
+ignore:
+  - companion
+  - README.md
+  - ARCHITECTURE.md
+  - .github
