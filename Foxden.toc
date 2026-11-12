@@ -35,6 +35,7 @@ Modules\GuildShare.lua
 Modules\Journal.lua
 Modules\Roster.lua
 Modules\Locate.lua
+Modules\Atlas.lua
 Modules\Version.lua
 Modules\Relay.lua
 

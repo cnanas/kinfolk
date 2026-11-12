@@ -20,6 +20,7 @@ Features are added as files, not by editing the core.
 | `Views/` | **Tabs** in the run detail (Overview, Fights, ...). |
 | `UI/Settings.lua` | Settings > AddOns page. |
 | `Modules/Relay.lua` | Hands finished runs to a guildmate whose companion is set up (a "courier"); couriers store them in `FoxdenDB.relay`. |
+| `Modules/Atlas.lua` | Where each zone sits on its continent (names + rectangles from the game's map data, `FoxdenDB.atlas`), so the website can draw its own map. |
 | `UI/CopyRun.lua` | The copy box after a run (`/fox copy`): `FOXDEN1:{json}` for the website's Post a run page. |
 
 ## Add a recorder

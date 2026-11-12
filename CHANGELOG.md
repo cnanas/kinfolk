@@ -4,6 +4,7 @@
 
 - **Your runs reach the website even without the companion app.** Foxden hands finished runs to a guildmate who runs the companion, the next time you're both online. `/fox status` shows how many are waiting.
 - **Copy a run:** after each run, Foxden shows it ready to copy (Ctrl+C) and paste on your guild website's "Post a run" page. `/fox copy` opens it again; you can turn it off in Settings.
+- **Guild map on the website:** members who share their location show on a map of the continent on the guild website (signed-in members only), as of the last sync. Foxden reads where each zone sits so the site can draw it; no map images leave the game.
 - Guild messages are now paced to stay under the game's limit, so large recipe lists aren't cut short.
 - The Settings page scrolls on smaller screens.
 

@@ -34,6 +34,7 @@ local function tick()
   if not sharing() then return end
   local map, x, y, zone = myPosition()
   if not map then return end
+  if ns.AtlasEnsure then ns.AtlasEnsure(map) end
   local now = GetTime()
   local moved = map ~= lastSent.map or math.abs(x - lastSent.x) + math.abs(y - lastSent.y) >= 3
   if (moved and now - lastSent.at >= EVERY) or now - lastSent.at >= HEARTBEAT then

@@ -218,14 +218,14 @@ async function uploadJournal(journal) {
 }
 
 // The guild roster (name, rank, level, class, zone, online) -> members-only website page.
-async function uploadRoster(roster, locations) {
+async function uploadRoster(roster, locations, atlas) {
   if (!roster || !roster.members || !config.siteUrl || !config.siteKey || DRY) return;
-  const hash = createHash('sha256').update(JSON.stringify([roster, locations || {}])).digest('hex');
+  const hash = createHash('sha256').update(JSON.stringify([roster, locations || {}, atlas || {}])).digest('hex');
   if (hash === craftState.rosterHash) return;
   try {
     const res = await fetch(`${config.siteUrl.replace(/\/$/, '')}/api/roster`, {
       method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${config.siteKey}` },
-      body: JSON.stringify({ roster, locations: locations || {}, reportedBy: Object.keys(craftState.pages || {})[0] || null }),
+      body: JSON.stringify({ roster, locations: locations || {}, atlas: atlas || null, reportedBy: Object.keys(craftState.pages || {})[0] || null }),
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) { console.error(`Roster upload failed (${res.status}): ${data.error || 'no details'}`); return; }
@@ -308,7 +308,7 @@ async function check() {
     }
     await uploadCrafting(db && db.crafting);
     await uploadJournal(db && db.journal);
-    await uploadRoster(db && db.roster, db && db.locations);
+    await uploadRoster(db && db.roster, db && db.locations, db && db.atlas);
     await writeSiteData(db && db.crafting);
   } catch (err) {
     console.error('Unexpected error:', err);

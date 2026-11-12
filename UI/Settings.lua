@@ -101,7 +101,7 @@ local rO = add(UI.Toggle(panel, CONTENT_W, "Offer my crafts in the guild shop",
   end), rC)
 
 local rL = add(UI.Toggle(panel, CONTENT_W, "Share my location with the guild",
-  "Guildmates see your zone and position on their map. Never inside dungeons or raids.", get("shareLocation"), function(v)
+  "Guildmates see your zone and position on their map (and signed-in members on the guild website). Never inside dungeons or raids.", get("shareLocation"), function(v)
     if ns.SetShareLocation then ns.SetShareLocation(v) else ns.settings.shareLocation = v end
     if ns.RefreshUI then ns.RefreshUI() end
   end), rO)

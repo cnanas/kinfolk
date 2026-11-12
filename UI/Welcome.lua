@@ -30,7 +30,7 @@ local function build()
   intro:SetText("Choose what your guild can see. You can change these any time in Settings > AddOns > Foxden.")
 
   local r1 = UI.Toggle(W, 476, "Share my location with the guild",
-    "Guildmates with Foxden see your zone and position on their map. Never inside dungeons or raids.",
+    "Guildmates with Foxden see your zone and position on their map, and signed-in members on the guild website. Never inside dungeons or raids.",
     function() return choice.location end, function(v) choice.location = v end)
   r1:SetPoint("TOPLEFT", intro, "BOTTOMLEFT", 0, -16)
   local r2 = UI.Toggle(W, 476, "Share my professions with the guild",
