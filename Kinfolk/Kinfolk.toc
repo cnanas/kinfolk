@@ -2,7 +2,7 @@
 ## Title: Kinfolk
 ## Notes: Your guild's companion: dungeon runs and maps, the dungeon journal, guild roster with location sharing, professions, and an optional guild website.
 ## Author: playeronefox
-## Version: 2.0.0
+## Version: 2.1.0
 ## SavedVariables: KinfolkDB, NinthTailDB, NinthTailLogDB
 ## OptionalDeps: EllesmereUI
 ## X-License: MIT
@@ -32,6 +32,7 @@ Modules\GuildShare.lua
 Modules\Journal.lua
 Modules\Roster.lua
 Modules\Locate.lua
+Modules\Version.lua
 
 # dashboard: widgets, window, run detail views, then pages
 UI\StatPanel.lua
