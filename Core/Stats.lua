@@ -87,7 +87,7 @@ function ns.Slug(name)
   return (tostring(name or ""):lower():gsub("^the%s+", ""):gsub("['’]", ""):gsub("[^%w]+", "-"):gsub("^%-+", ""):gsub("%-+$", ""))
 end
 
--- The companion's snapshot of the website (shop, costs, orders), if it has written one.
+-- The companion's snapshot of the website (craft list, costs, requests), if it has written one.
 function ns.Site()
   local s = FoxdenSiteData
   if type(s) == "table" and s.v == 1 then return s end

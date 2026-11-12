@@ -237,7 +237,7 @@ async function uploadRoster(roster, locations, atlas) {
 }
 
 // ---- Site data for the addon ----------------------------------------------
-// Shop, costs and orders aren't in the game, so the companion writes them into
+// Craft requests and costs aren't in the game, so the companion writes them into
 // the addon folder as Lua; the addon reads it on the next /reload.
 function toLua(v) {
   if (v === null || v === undefined) return 'nil';
@@ -263,13 +263,13 @@ async function writeSiteData(crafting) {
     if (!res.ok) { console.error(`Couldn't fetch site data for the addon (${res.status})`); return; }
     const data = await res.json();
     data.links = {};
-    for (const [k, url] of Object.entries(craftState.pages || {})) data.links[k] = { stock: url, orders: url.replace('/stock?', '/orders?') };
+    for (const [k, url] of Object.entries(craftState.pages || {})) data.links[k] = { stock: url, orders: url.replace('/stock?', '/requests?') };
     const { at, ...rest } = data; // "at" changes every call; compare the rest
     const hash = createHash('sha256').update(JSON.stringify(rest)).digest('hex');
     if (hash === craftState.exportHash && fs.existsSync(file)) return;
     fs.writeFileSync(file, `-- Written by the Foxden companion. Don't edit: it's replaced after each sync.\nFoxdenSiteData = ${toLua(data)}\n`);
     craftState.exportHash = hash; saveCraftState();
-    console.log(`Updated the addon's shop, costs and orders (${data.shop.length} on offer, ${data.orders.length} open orders). /reload in game to see them.`);
+    console.log(`Updated the addon's craft list, costs and requests (${data.shop.length} requestable crafts, ${data.orders.length} open requests). /reload in game to see them.`);
   } catch (err) {
     console.error(`Couldn't update the addon's site data (${err.message}).`);
   }

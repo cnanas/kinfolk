@@ -93,8 +93,8 @@ local rC = add(UI.Toggle(panel, CONTENT_W, "Share my professions with the guild"
     if v and ns.ShareProfessions then ns.ShareProfessions(true) end
     if ns.RefreshUI then ns.RefreshUI() end
   end), sC, true)
-local rO = add(UI.Toggle(panel, CONTENT_W, "Offer my crafts in the guild shop",
-  "List your crafts in the guild shop on the website. Crafting is free: the requester brings the materials.", get("offer"), function(v)
+local rO = add(UI.Toggle(panel, CONTENT_W, "Take craft requests from guildmates",
+  "Guildmates can request your crafts on the website. Free: they bring the materials.", get("offer"), function(v)
     ns.settings.offer = v
     if ns.ShareProfessions then ns.ShareProfessions(true) end
     if ns.RefreshUI then ns.RefreshUI() end

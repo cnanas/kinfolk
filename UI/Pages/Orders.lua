@@ -1,4 +1,4 @@
--- Page: Orders. Open craft requests for your characters, from the website.
+-- Page: Requests. Open craft requests for your characters, from the website.
 -- Accepting and updating happens on your private orders page (link below);
 -- the game can't open web pages, so copy it into your browser.
 
@@ -8,7 +8,7 @@ local C = UI.C
 local PAD = 16
 local STATUS = { requested = "Requested", accepted = "Waiting for materials", crafted = "Crafted", mailed = "Delivered" }
 
-local page = { key = "orders", label = "Orders", section = "craft", order = 80 }
+local page = { key = "orders", label = "Requests", section = "craft", order = 80 }
 
 function page:Build(f)
   self.intro = UI.Text(f, 12, C.dim); self.intro:SetWordWrap(true)
@@ -44,18 +44,18 @@ function page:Refresh()
   self.empty:SetShown(not has)
   if not has then self.empty:SetText(ns.NO_SITE); return end
   local orders = site.orders or {}
-  self.intro:SetText(#orders == 0 and "No open orders for your characters. New requests for crafts you offer show up here after the next sync."
-    or (#orders .. (#orders == 1 and " open order" or " open orders") .. " for your characters, as of " .. date("%b %d, %H:%M", site.at) .. ". Free crafting: the requester mails you the materials."))
+  self.intro:SetText(#orders == 0 and "No open requests for your characters. New requests for your crafts show up here after the next sync."
+    or (#orders .. (#orders == 1 and " open request" or " open requests") .. " for your characters, as of " .. date("%b %d, %H:%M", site.at) .. ". Free crafting: the requester mails you the materials."))
   self.list:SetItems(orders)
   local me = ns.CharKey and ns.CharKey()
   local links = site.links or {}
   local mine = links[me] or select(2, next(links))
   if mine and mine.orders then
-    self.foot:SetText("Accept, decline and mark orders on your private orders page. Copy this link into your browser (don't share it):")
+    self.foot:SetText("Accept, decline and update requests on your private requests page. Copy this link into your browser (don't share it):")
     self.link:SetLink(mine.orders)
   else
-    self.foot:SetText("Your private orders link appears after the companion uploads your professions.")
-    self.link:SetLink((site.site or "") .. "/shop")
+    self.foot:SetText("Your private requests link appears after the companion uploads your professions.")
+    self.link:SetLink((site.site or "") .. "/craft")
   end
 end
 

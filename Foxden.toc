@@ -19,7 +19,7 @@ Core\Json.lua
 Core\Style.lua
 Core\Stats.lua
 
-# written by the companion app: the website's shop, costs and your orders
+# written by the companion app: the website's craft list, costs and your requests
 Data\SiteData.lua
 
 # recorders: each adds its own fields to a run

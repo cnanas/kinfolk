@@ -1,4 +1,4 @@
--- Page: Shop. Crafts guild members offer, for free: the requester brings the materials.
+-- Page: Request a craft. Crafts guildmates can make, for free: the requester brings the materials.
 -- Data: the companion's snapshot of the website (ns.Site().shop).
 
 local _, ns = ...
@@ -6,12 +6,12 @@ local UI = ns.UI
 local C = UI.C
 local PAD = 16
 
-local page = { key = "shop", label = "Shop", section = "craft", order = 50 }
+local page = { key = "shop", label = "Request", section = "craft", order = 50 }
 local query, selected = "", nil
 
 function page:Build(f)
   self.intro = UI.Text(f, 12, C.dim); self.intro:SetWordWrap(true)
-  self.search = UI.SearchBox(f, 240, "Search the shop", function(t) query = t:lower(); self:Refresh() end)
+  self.search = UI.SearchBox(f, 240, "Search crafts", function(t) query = t:lower(); self:Refresh() end)
   self.head = {}
   for i, label in ipairs({ "Craft", "Crafters", "Materials, about" }) do self.head[i] = UI.Text(f, 11, C.faint, i > 2 and "RIGHT" or "LEFT"); self.head[i]:SetText(label) end
   self.list = UI.List(f, 34, function(r)
@@ -54,7 +54,7 @@ function page:Refresh()
   for _, h in ipairs(self.head) do h:SetShown(has) end
   self.empty:SetShown(not has)
   if not has then self.empty:SetText(ns.NO_SITE); return end
-  self.intro:SetText("Crafts guild members offer, for free: you bring the materials, they make it. The value shown is only a guide to what the materials cost at the auction house.")
+  self.intro:SetText("Ask a guildmate to make something: you bring the materials, they craft it, nobody pays. The value shown is only a guide to what the materials cost at the auction house.")
   local items = {}
   for _, l in ipairs(site.shop or {}) do
     if query == "" or l[3]:lower():find(query, 1, true) or l[4]:lower():find(query, 1, true) then items[#items + 1] = l end
@@ -62,14 +62,14 @@ function page:Refresh()
   table.sort(items, function(a, b) return a[4] == b[4] and a[3] < b[3] or a[4] < b[4] end)
   self.list:SetItems(items)
   if #site.shop == 0 then
-    self.foot:SetText("The shop is empty. Crafters join by turning on \"Offer my crafts in the guild shop\" in Settings, then syncing.")
-    self.link:SetLink((site.site or "") .. "/shop")
+    self.foot:SetText("Nobody is taking requests yet. Crafters join by turning on \"Take craft requests from guildmates\" in Settings, then syncing.")
+    self.link:SetLink((site.site or "") .. "/craft")
   elseif selected then
     self.foot:SetText("To order, whisper a crafter in game or request it on the website (copy this link into your browser):")
-    self.link:SetLink((site.site or "") .. "/shop/" .. selected)
+    self.link:SetLink((site.site or "") .. "/craft/" .. selected)
   else
     self.foot:SetText("Click a craft for its order link. Request on the website or whisper a crafter, then mail them the materials when they accept.")
-    self.link:SetLink((site.site or "") .. "/shop")
+    self.link:SetLink((site.site or "") .. "/craft")
   end
 end
 

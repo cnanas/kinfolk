@@ -13,9 +13,9 @@ Features are added as files, not by editing the core.
 | `Modules/` | **Recorders.** Each one watches its own game events and writes its own fields on the run. |
 | `UI/Window.lua` | The `/fox` dashboard: resizable window, sidebar, page registry (`ns.RegisterPage`), view registry. |
 | `UI/Widgets.lua` | Scrolling list, search box, copyable link box, filter chips. |
-| `UI/Pages/` | **Pages** in the sidebar: Overview, Runs, Journal, Players (Dungeon log); Shop, Costs, Crafters, Orders (Crafting). |
+| `UI/Pages/` | **Pages** in the sidebar: Overview, Runs, Journal, Players (Dungeon log); Request, Costs, Crafters, Requests (Crafting). |
 | `Core/Stats.lua` | Dungeon, player and total statistics from the runs saved in this game. |
-| `Data/SiteData.lua` | Written by the companion: the website's shop, costs and your open orders (`FoxdenSiteData`). Read on /reload. |
+| `Data/SiteData.lua` | Written by the companion: the website's craft list, costs and your open requests (`FoxdenSiteData`). Read on /reload. |
 | `UI/StatPanel.lua` | Stat tabs + class-colored bars, reused by views. |
 | `Views/` | **Tabs** in the run detail (Overview, Fights, ...). |
 | `UI/Settings.lua` | Settings > AddOns page. |

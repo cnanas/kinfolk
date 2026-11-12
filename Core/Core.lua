@@ -54,7 +54,7 @@ function ns.MyCrafting()
   end
   me.level = UnitLevel("player")
   me.guild = GetGuildInfo("player")
-  me.offer = ns.settings.offer and true or false -- opted in to the guild shop
+  me.offer = ns.settings.offer and true or false -- takes craft requests from guildmates
   return me
 end
 

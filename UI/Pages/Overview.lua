@@ -74,7 +74,7 @@ function page:Refresh()
     { t.runs, "runs logged", t.week .. " this week" },
     { t.bosses, "bosses down", "in " .. t.dungeons .. (t.dungeons == 1 and " dungeon" or " dungeons") },
     { string.format("%.1f", t.seconds / 3600), "hours inside", "" },
-    { site and #site.shop or "—", "crafts on offer", site and "in the guild shop" or "sync to load the shop" },
+    { site and #site.shop or "—", "crafts to request", site and "from guildmates, free" or "sync to load crafting" },
   }
   for i, tile in ipairs(self.tiles) do tile.value:SetText(tiles[i][1]); tile.label:SetText(tiles[i][2]); tile.sub:SetText(tiles[i][3]) end
 

@@ -56,7 +56,7 @@ Check what it would post with `npm run dry-run`, then leave `npm start` running 
 
 ## Guild websites: coming soon
 
-Some pages in the window (Shop, Costs and Orders) need a guild website: a shop where guildmates craft for each other for free (you bring the materials), craft requests, a shared boss journal with tips from your guild, and run pages. Guild websites are coming soon as a service. Everything else in Foxden works without one.
+Some pages in the window (Request, Costs and Requests) need a guild website: free craft requests between guildmates (you bring the materials), a shared boss journal with tips from your guild, and run pages. Guild websites are coming soon as a service. Everything else in Foxden works without one.
 
 ## Free crafting, never real money
 
