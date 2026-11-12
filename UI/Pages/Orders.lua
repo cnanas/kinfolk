@@ -6,7 +6,7 @@ local _, ns = ...
 local UI = ns.UI
 local C = UI.C
 local PAD = 16
-local STATUS = { requested = "Requested", accepted = "Accepted", crafted = "Crafted", mailed = "Mailed (COD)" }
+local STATUS = { requested = "Requested", accepted = "Waiting for materials", crafted = "Crafted", mailed = "Delivered" }
 
 local page = { key = "orders", label = "Orders", section = "craft", order = 80 }
 
@@ -16,13 +16,11 @@ function page:Build(f)
     r.name = UI.Text(r, 13); r.name:SetPoint("TOPLEFT", 14, -8)
     r.sub = UI.Text(r, 11, C.dim); r.sub:SetPoint("TOPLEFT", r.name, "BOTTOMLEFT", 0, -4)
     r.status = UI.Text(r, 12, C.text, "RIGHT"); r.status:SetPoint("TOPRIGHT", -14, -8)
-    r.price = UI.Text(r, 11, C.dim, "RIGHT"); r.price:SetPoint("TOPRIGHT", r.status, "BOTTOMRIGHT", 0, -4)
   end, function(r, o)
     r.name:SetText(o[3] .. "x " .. o[2] .. "  |cff999fb0#" .. o[1] .. "|r")
-    r.sub:SetText("For " .. o[4] .. (o[7] == "mine" and ", bringing their own materials" or "") .. (o[8] ~= "" and (", taken by " .. o[8]) or ", open to any crafter"))
+    r.sub:SetText("For " .. o[4] .. ", who brings the materials" .. (o[8] ~= "" and (", taken by " .. o[8]) or ", open to any crafter"))
     r.status:SetText(STATUS[o[5]] or o[5])
     if o[5] == "requested" then r.status:SetTextColor(UI.Accent()) else r.status:SetTextColor(unpack(C.text)) end
-    r.price:SetText(ns.Money(o[6]))
   end)
   UI.Fill(self.list, { 0, 0, 0, 0.12 })
   self.foot = UI.Text(f, 11, C.dim); self.foot:SetWordWrap(true)
@@ -47,7 +45,7 @@ function page:Refresh()
   if not has then self.empty:SetText(ns.NO_SITE); return end
   local orders = site.orders or {}
   self.intro:SetText(#orders == 0 and "No open orders for your characters. New requests for crafts you offer show up here after the next sync."
-    or (#orders .. (#orders == 1 and " open order" or " open orders") .. " for your characters, as of " .. date("%b %d, %H:%M", site.at) .. ". Gold only: mail it cash on delivery."))
+    or (#orders .. (#orders == 1 and " open order" or " open orders") .. " for your characters, as of " .. date("%b %d, %H:%M", site.at) .. ". Free crafting: the requester mails you the materials."))
   self.list:SetItems(orders)
   local me = ns.CharKey and ns.CharKey()
   local links = site.links or {}

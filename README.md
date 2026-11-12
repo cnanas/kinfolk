@@ -56,11 +56,11 @@ Check what it would post with `npm run dry-run`, then leave `npm start` running 
 
 ## Guild websites: coming soon
 
-Some pages in the window (Shop, Costs and Orders) need a guild website: a shop with fair crafting prices from the auction house, craft orders paid in game by cash-on-delivery mail, a shared boss journal with tips from your guild, and run pages. Guild websites are coming soon as a service. Everything else in Foxden works without one.
+Some pages in the window (Shop, Costs and Orders) need a guild website: a shop where guildmates craft for each other for free (you bring the materials), craft requests, a shared boss journal with tips from your guild, and run pages. Guild websites are coming soon as a service. Everything else in Foxden works without one.
 
-## Gold only
+## Free crafting, never real money
 
-Foxden's crafting features are for in-game gold between guildmates on the same realm and faction. Never buy or sell gold, items or services for real money. Blizzard bans that.
+Crafting through Foxden is free between guildmates: you bring the materials, a guildmate makes it. Never buy or sell gold, items or services for real money; Blizzard bans it.
 
 ## License
 
