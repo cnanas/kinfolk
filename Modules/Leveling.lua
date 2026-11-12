@@ -51,6 +51,12 @@ function ns.LevelHistory(charKey)
 end
 
 -- The card and the guild toast live in UI/LevelUp.lua (ns.ShowLevelUp, ns.ShowGuildDing).
+local function remember(name, level, class)
+  db.dings = db.dings or {}
+  table.insert(db.dings, { name = name, level = level, class = class, at = GetServerTime() })
+  while #db.dings > 200 do table.remove(db.dings, 1) end
+end
+
 local function finish(level, gains, seconds)
   local m = me()
   m.history[level] = { at = GetServerTime(), seconds = seconds, gains = gains }
@@ -77,6 +83,7 @@ local function onLevelUp(level, hp, mp, _, _, str, agi, sta, int, spi)
     -- if /played never answers, show the card anyway
     C_Timer.After(4, function() if waiting and waiting.level == level then waiting = nil; shownWithoutTime = level; finish(level, gains, nil) end end)
   end)
+  do local _, c = UnitClass("player"); remember(UnitName("player"), level, c) end
   if ns.settings.welcomed and ns.settings.shareLevelUps ~= false and IsInGuild() then
     local _, class = UnitClass("player")
     ns.Send(table.concat({ "D", level, class or "" }, "\t"), "GUILD")
@@ -111,6 +118,7 @@ local function onMessage(prefix, text, channel, sender)
   if not sender:find("-") then sender = sender .. "-" .. ((GetNormalizedRealmName and GetNormalizedRealmName()) or "") end
   if sender == ns.CharKey() then return end
   level = tonumber(level)
+  if level and level > 1 and level <= 200 then remember(sender:gsub("%-.*", ""), level, class ~= "" and class or nil) end
   if level and level > 1 and level <= 200 and ns.ShowGuildDing and ns.settings.guildDings ~= false then
     ns.ShowGuildDing(sender:gsub("%-.*", ""), level, class)
   end

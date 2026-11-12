@@ -236,6 +236,26 @@ async function uploadRoster(roster, locations, atlas) {
   }
 }
 
+// Level-ups, guild dings and trainer lists -> website. Only when something changed.
+async function uploadLeveling(levels, dings, trainers) {
+  if (!config.siteUrl || !config.siteKey || DRY) return;
+  if (!levels && !dings && !trainers) return;
+  const body = { levels: levels || {}, dings: dings || [], trainers: trainers ? { class: trainers.class || {}, prof: trainers.prof || {} } : {} };
+  const hash = createHash('sha256').update(JSON.stringify(body)).digest('hex');
+  if (hash === craftState.levelingHash) return;
+  try {
+    const res = await fetch(`${config.siteUrl.replace(/\/$/, '')}/api/leveling`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${config.siteKey}` }, body: JSON.stringify(body),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) { console.error(`Leveling upload failed (${res.status}): ${data.error || 'no details'}`); return; }
+    craftState.levelingHash = hash; saveCraftState();
+    console.log(`Uploaded leveling: ${data.levels} level-ups, ${data.dings} guild dings, ${data.spells} trainer entries.`);
+  } catch (err) {
+    console.error(`Website unreachable for the leveling upload (${err.message}).`);
+  }
+}
+
 // ---- Site data for the addon ----------------------------------------------
 // Craft requests and costs aren't in the game, so the companion writes them into
 // the addon folder as Lua; the addon reads it on the next /reload.
@@ -309,6 +329,7 @@ async function check() {
     await uploadCrafting(db && db.crafting);
     await uploadJournal(db && db.journal);
     await uploadRoster(db && db.roster, db && db.locations, db && db.atlas);
+    await uploadLeveling(db && db.levels, db && db.dings, db && db.trainers);
     await writeSiteData(db && db.crafting);
   } catch (err) {
     console.error('Unexpected error:', err);

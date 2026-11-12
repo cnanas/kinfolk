@@ -103,7 +103,17 @@ function ns.ClassAbilities()
   if not db then return nil end
   local _, class = UnitClass("player")
   local c = T().class[class]
-  if not c then return nil end
+  if not c then
+    -- not visited yet: use the list guildmates read at their trainers (from the website)
+    local site = ns.Site and ns.Site()
+    local rows = site and type(site.trainers) == "table" and site.trainers[class]
+    if type(rows) ~= "table" or #rows == 0 then return nil end
+    local spells = {}
+    for _, r in ipairs(rows) do
+      spells[#spells + 1] = { id = (r[1] or 0) > 0 and r[1] or nil, name = r[2], rank = (r[3] ~= "" and r[3]) or nil, level = r[4] or 0, cost = r[5] or 0 }
+    end
+    c = { at = site.at, spells = spells, fromGuild = true }
+  end
   local me, level = ns.CharKey(), UnitLevel("player")
   local ignore = T().ignore[me] or {}
   local out = {}
@@ -112,7 +122,7 @@ function ns.ClassAbilities()
     out[#out + 1] = setmetatable({ status = status }, { __index = s })
   end
   table.sort(out, function(a, b) if a.level ~= b.level then return a.level < b.level end return (a.name .. (a.rank or "")) < (b.name .. (b.rank or "")) end)
-  return out, c.at
+  return out, c.at, c.fromGuild
 end
 
 function ns.SetSkipped(s, on)

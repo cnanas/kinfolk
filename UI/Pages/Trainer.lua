@@ -51,7 +51,7 @@ function page:Layout(w, h)
 end
 
 function page:Refresh()
-  local all, at = ns.ClassAbilities and ns.ClassAbilities()
+  local all, at, fromGuild = ns.ClassAbilities and ns.ClassAbilities()
   local has = all ~= nil
   for _, el in ipairs({ self.title, self.sub, self.chips, self.list, self.hint }) do el:SetShown(has) end
   self.empty:SetShown(not has)
@@ -74,7 +74,7 @@ function page:Refresh()
     for _, s in ipairs(all) do if s.status == "soon" and s.level == nextLevel then n = n + 1 end end
     bits[#bits + 1] = "next: " .. n .. " at level " .. nextLevel
   end
-  bits[#bits + 1] = "trainer list from " .. date("%b %d", at)
+  bits[#bits + 1] = (fromGuild and "guild's trainer list from " or "trainer list from ") .. date("%b %d", at or GetServerTime())
   self.sub:SetText(table.concat(bits, "   ·   "))
   if counts[view] == 0 and view ~= "all" then view = counts.ready > 0 and "ready" or "soon" end
   self.chips:SetOptions({
