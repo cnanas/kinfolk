@@ -1,5 +1,12 @@
 # Foxden
 
+## 2.2.0
+
+- **Your runs reach the website even without the companion app.** Foxden hands finished runs to a guildmate who runs the companion, the next time you're both online. `/fox status` shows how many are waiting.
+- **Copy a run:** after each run, Foxden shows it ready to copy (Ctrl+C) and paste on your guild website's "Post a run" page. `/fox copy` opens it again; you can turn it off in Settings.
+- Guild messages are now paced to stay under the game's limit, so large recipe lists aren't cut short.
+- The Settings page scrolls on smaller screens.
+
 ## 2.1.0
 
 First public release.

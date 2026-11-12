@@ -28,7 +28,7 @@ local function myPosition()
   return map, math.floor(x * 1000 + 0.5), math.floor(y * 1000 + 0.5), zone
 end
 
-local function send(msg) if C_ChatInfo and C_ChatInfo.SendAddonMessage then pcall(C_ChatInfo.SendAddonMessage, PREFIX, msg, "GUILD") end end
+local function send(msg) ns.Send(msg, "GUILD", nil, true) end -- small and time-sensitive: front of the queue
 
 local function tick()
   if not sharing() then return end

@@ -7,6 +7,8 @@ Features are added as files, not by editing the core.
 | Folder | What lives there |
 |---|---|
 | `Core/Core.lua` | Saved data, starting and finishing runs, resuming after `/reload`, the module and status-line registries, slash commands. |
+| `Core/Comm.lua` | One paced queue (`ns.Send`) for every hidden addon message, under the game's per-prefix limit; retries throttled sends. |
+| `Core/Json.lua` | JSON encoder for runs leaving the game (`ns.RunCode` for the copy box, `ns.RunForTransfer` for the relay; path thinned to 400 points). |
 | `Core/Style.lua` | The look: colors, text, buttons, switches, steppers, formatting. Takes accent and font from EllesmereUI when present. |
 | `Modules/` | **Recorders.** Each one watches its own game events and writes its own fields on the run. |
 | `UI/Window.lua` | The `/fox` dashboard: resizable window, sidebar, page registry (`ns.RegisterPage`), view registry. |
@@ -17,6 +19,8 @@ Features are added as files, not by editing the core.
 | `UI/StatPanel.lua` | Stat tabs + class-colored bars, reused by views. |
 | `Views/` | **Tabs** in the run detail (Overview, Fights, ...). |
 | `UI/Settings.lua` | Settings > AddOns page. |
+| `Modules/Relay.lua` | Hands finished runs to a guildmate whose companion is set up (a "courier"); couriers store them in `FoxdenDB.relay`. |
+| `UI/CopyRun.lua` | The copy box after a run (`/fox copy`): `FOXDEN1:{json}` for the website's Post a run page. |
 
 ## Add a recorder
 
@@ -87,6 +91,7 @@ Bump `ns.SCHEMA` in `Core/Core.lua` and upgrade old runs in the owning module's 
 | `bosses, wipes` | Bosses |
 | `stats, segments, combatSeconds, fights` | Meter |
 | `route` | Route |
+| `relayedTo, relayedAt` | Relay (sender side: which courier took it) |
 
 Not part of a run: `FoxdenDB.journal` (Modules/Journal.lua: the game's Encounter Journal, re-read after patches or with `/fox journaltest`), `FoxdenDB.crafting` (professions, inventory, guild crafters).
 

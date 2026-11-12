@@ -33,6 +33,8 @@ The first time you log in, Foxden asks what you want to share. Nothing is sent u
 
 WoW only writes saved data to disk on `/reload` or logout, so use `/fox sync` after a run if you want it posted straight away.
 
+Not everyone needs the companion: Foxden hands your finished runs to a guildmate who runs it, the next time you're both online. If your guild has a website, you can also paste a run there yourself: Foxden shows it ready to copy after each run (or type `/fox copy`).
+
 ## Post runs to Discord (optional)
 
 The companion is a small Node.js app (version 18 or newer) that runs on your computer while you play. It watches Foxden's saved data and posts each new run to a Discord channel.

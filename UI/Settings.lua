@@ -6,9 +6,26 @@ local C = UI.C
 
 local CONTENT_W = 560
 
-local panel = CreateFrame("Frame")
-panel.name = "Foxden"
+-- root is what Settings shows; the content scrolls inside it (mouse wheel), so
+-- nothing is cut off on short screens.
 local rows = {}
+local root = CreateFrame("Frame")
+root.name = "Foxden"
+local scroll = CreateFrame("ScrollFrame", nil, root)
+scroll:SetAllPoints()
+local panel = CreateFrame("Frame", nil, scroll)
+panel:SetSize(CONTENT_W + 40, 1200)
+scroll:SetScrollChild(panel)
+scroll:EnableMouseWheel(true)
+local function maxScroll()
+  local last = rows[#rows]
+  if not (last and last:GetBottom() and panel:GetTop()) then return 0 end
+  return math.max(0, (panel:GetTop() - last:GetBottom()) + 24 - scroll:GetHeight())
+end
+scroll:SetScript("OnMouseWheel", function(self, delta)
+  self:SetVerticalScroll(math.min(maxScroll(), math.max(0, self:GetVerticalScroll() - delta * 40)))
+end)
+scroll:SetScript("OnSizeChanged", function(self, w) panel:SetWidth(math.max(CONTENT_W + 40, w or 0)) end)
 
 local function set(key) return function(v) ns.settings[key] = v; if ns.RefreshUI then ns.RefreshUI() end end end
 local function get(key) return function() return ns.settings[key] end end
@@ -66,8 +83,10 @@ local r2 = add(UI.Toggle(panel, CONTENT_W, "Chat messages",
   "Say in chat when a run starts and when it's saved.", get("chat"), set("chat")), r1)
 local r3 = add(UI.Toggle(panel, CONTENT_W, "Sync reminder",
   "Remind you to sync after each run so it reaches Discord.", get("remind"), set("remind")), r2)
+local r4 = add(UI.Toggle(panel, CONTENT_W, "Show the copy box after runs",
+  "If you don't run the companion app: the run, ready to paste on the guild website.", get("copyPopup"), set("copyPopup")), r3)
 
-local sC = section("Crafting", r3)
+local sC = section("Crafting", r4)
 local rC = add(UI.Toggle(panel, CONTENT_W, "Share my professions with the guild",
   "Guildmates with the addon see what you can craft. Bags and bank are never shared.", get("share"), function(v)
     ns.settings.share = v
@@ -113,22 +132,22 @@ function ns.RefreshSettings()
 end
 
 -- the page is already "shown" when Settings first displays it, so refresh on open too
-panel:SetScript("OnShow", function() ns.RefreshSettings() end)
+root:SetScript("OnShow", function() ns.RefreshSettings() end)
 
 local category
 if Settings and Settings.RegisterCanvasLayoutCategory and Settings.RegisterAddOnCategory then
-  category = Settings.RegisterCanvasLayoutCategory(panel, "Foxden")
+  category = Settings.RegisterCanvasLayoutCategory(root, "Foxden")
   category.ID = "Foxden"
   Settings.RegisterAddOnCategory(category)
 elseif InterfaceOptions_AddCategory then
-  InterfaceOptions_AddCategory(panel)
+  InterfaceOptions_AddCategory(root)
 end
 
 function ns.OpenSettings()
   if category and Settings.OpenToCategory then
     Settings.OpenToCategory(category.GetID and category:GetID() or category.ID)
   elseif InterfaceOptionsFrame_OpenToCategory then
-    InterfaceOptionsFrame_OpenToCategory(panel)
-    InterfaceOptionsFrame_OpenToCategory(panel)
+    InterfaceOptionsFrame_OpenToCategory(root)
+    InterfaceOptionsFrame_OpenToCategory(root)
   end
 end

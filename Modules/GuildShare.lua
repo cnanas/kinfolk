@@ -15,21 +15,11 @@
 local _, ns = ...
 local PREFIX = "Foxden"
 local MAX = 240
-local queue, sending = {}, false
 local lastShare, lastAnswer = 0, 0
 
 local function canSend() return ns.settings.share and ns.settings.welcomed and IsInGuild() and C_ChatInfo and C_ChatInfo.SendAddonMessage end
 
-local function pump()
-  local msg = table.remove(queue, 1)
-  if not msg then sending = false; return end
-  pcall(C_ChatInfo.SendAddonMessage, PREFIX, msg, "GUILD")
-  C_Timer.After(0.35, pump) -- stay well under the game's addon message throttle
-end
-local function send(msg)
-  queue[#queue + 1] = msg
-  if not sending then sending = true; C_Timer.After(0.1, pump) end
-end
+local function send(msg) ns.Send(msg, "GUILD") end -- Core/Comm.lua paces it under the game's limit
 
 function ns.ShareProfessions(force)
   if not canSend() then return end

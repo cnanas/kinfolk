@@ -10,7 +10,7 @@ local ADDON, ns = ...
 -- that owns the changed data to upgrade older runs in its Migrate hook.
 ns.SCHEMA = 3
 
-ns.DEFAULTS = { track = true, chat = true, remind = true, keep = 100, scale = 1, share = true, offer = false, shareLocation = true, welcomed = false }
+ns.DEFAULTS = { track = true, chat = true, remind = true, keep = 100, scale = 1, share = true, offer = false, shareLocation = true, welcomed = false, copyPopup = true }
 ns.settings = setmetatable({}, { __index = ns.DEFAULTS }) -- replaced at load
 
 local db, run
@@ -68,6 +68,7 @@ function ns.Changed() if ns.RefreshUI then ns.RefreshUI() end end
 --   OnRunStart(self, run)     a run just started; add your fields to it
 --   OnCombatEnd(self, run)    a fight ended and the meter has settled
 --   OnRunFinish(self, run)    last chance to record before the run is saved
+--   OnRunSaved(self, run)     the run is saved (relay, copy box)
 --   Migrate(self, run, from)  upgrade a run saved with an older schema
 -- Hooks are isolated: an error in one module is reported and the rest carry on.
 
@@ -159,8 +160,9 @@ local function finishRun(reason)
   local r = run
   saveRun(r, reason, GetServerTime())
   db.current, run = nil, nil
+  fire("OnRunSaved", r)
   say(string.format("Run saved: %s (%s).%s", r.dungeon, ns.UI and ns.UI.Time(r.duration) or r.duration .. "s",
-    ns.settings.remind and " Type /fox sync to send it to Discord." or ""))
+    ns.settings.remind and (ns.IsCourier and ns.IsCourier() and " Type /fox sync to send it to Discord." or "") or ""))
   ns.Changed()
 end
 ns.FinishRun = finishRun
@@ -176,7 +178,7 @@ local function checkZone()
 end
 
 local function onLoad()
-    FoxdenDB = FoxdenDB or { runs = {} }
+  FoxdenDB = FoxdenDB or { runs = {} }
   db = FoxdenDB
   db.runs = db.runs or {}
   db.settings = db.settings or {}
@@ -252,6 +254,8 @@ SlashCmdList.FOXDEN = function(msg)
     ns.Sync()
   elseif msg == "maptest" then
     if ns.MapTest then ns.MapTest() end
+  elseif msg == "copy" then
+    if ns.ShowCopyRun then ns.ShowCopyRun() end
   elseif msg == "welcome" then
     if ns.ShowWelcome then ns.ShowWelcome() end
   elseif msg == "journaltest" or msg == "journalscan" then
@@ -263,6 +267,6 @@ SlashCmdList.FOXDEN = function(msg)
       if ok and text then say(text, true) end
     end
   else
-    say("/fox (dashboard) · /fox options · /fox status · /fox end · /fox sync · /fox maptest · /fox journaltest · /fox welcome", true)
+    say("/fox (dashboard) · /fox options · /fox status · /fox end · /fox sync · /fox copy · /fox maptest · /fox journaltest · /fox welcome", true)
   end
 end

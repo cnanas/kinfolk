@@ -26,7 +26,7 @@ function ns.CompareVersions(a, b)
 end
 
 local function canSend() return ns.settings.welcomed and IsInGuild() and C_ChatInfo and C_ChatInfo.SendAddonMessage end
-local function announce() if canSend() then pcall(C_ChatInfo.SendAddonMessage, PREFIX, "V\t" .. mine(), "GUILD") end end
+local function announce() if canSend() then ns.Send("V\t" .. mine(), "GUILD") end end
 
 local function onMessage(prefix, text, channel, sender)
   if prefix ~= PREFIX or channel ~= "GUILD" or ns.IsSecret(text) or ns.IsSecret(sender) then return end

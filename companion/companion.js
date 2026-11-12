@@ -140,7 +140,7 @@ async function uploadToSite(run) {
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) { console.error(`Website upload failed (${res.status}): ${data.error || 'no details'}`); return null; }
-    return { url: data.url, image: data.image };
+    return { url: data.url, image: data.image, discord: !!data.discord, duplicate: !!data.duplicate };
   } catch (err) {
     console.error(`Website unreachable (${err.message}); will retry on the next change.`);
     return null;
@@ -149,6 +149,9 @@ async function uploadToSite(run) {
 
 async function send(run, attempt = 0, site) {
   if (site === undefined) { site = await uploadToSite(run); if (site === null) return false; }
+  // the website already posted it to Discord, or a groupmate uploaded the same run first
+  if (site.discord) { console.log('  (the website posted it to Discord)'); return true; }
+  if (site.duplicate) { console.log('  (already on the website from someone else in the group)'); return true; }
   const body = config.mode === 'raw' ? { run, ...site } : discordPayload(run, site);
   if (DRY) { console.log(JSON.stringify(body, null, 2)); return true; }
   let res;
@@ -289,6 +292,19 @@ async function check() {
         console.log(`Posted run: ${run.dungeon} (${run.id})`);
         if (!DRY) await sleep(1000); // stay under Discord's webhook rate limit on a backlog
       } else break; // keep order; try the rest next time
+    }
+    // runs guildmates handed to this character in game (Foxden's relay)
+    for (const [key, entry] of Object.entries((db && db.relay) || {})) {
+      const id = `relay:${key}`;
+      if (posted.has(id) || !entry || typeof entry.json !== 'string') continue;
+      let run;
+      try { run = JSON.parse(entry.json); } catch { console.error(`Relayed run ${key} is damaged; skipping it.`); posted.add(id); savePosted(); continue; }
+      if (!run || !run.id) continue;
+      const ok = await send(run);
+      if (!ok) break;
+      if (!DRY) { posted.add(id); savePosted(); }
+      console.log(`Posted relayed run from ${entry.from}: ${run.dungeon} (${run.id})`);
+      if (!DRY) await sleep(1000);
     }
     await uploadCrafting(db && db.crafting);
     await uploadJournal(db && db.journal);
