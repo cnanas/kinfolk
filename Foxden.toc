@@ -1,7 +1,7 @@
 ## Interface: 16001
 ## Title: Foxden
 ## Notes: Guild companion: dungeon run log, the dungeon journal, who can craft what, and the guild roster with optional location sharing.
-## Author: playeronefox
+## Author: Christian
 ## Version: 2.1.0
 ## SavedVariables: FoxdenDB
 ## OptionalDeps: EllesmereUI
