@@ -1,0 +1,17 @@
+{
+  "name": "kinfolk-companion",
+  "version": "1.0.0",
+  "description": "Watches Kinfolk's saved data and posts new runs, crafting and the guild roster to your guild's website and Discord.",
+  "type": "module",
+  "main": "companion.js",
+  "scripts": {
+    "start": "node companion.js",
+    "dry-run": "node companion.js --dry-run --once"
+  },
+  "dependencies": {
+    "luaparse": "^0.3.1"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

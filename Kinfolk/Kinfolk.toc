@@ -1,0 +1,56 @@
+## Interface: 16001
+## Title: Kinfolk
+## Notes: Your guild's companion: dungeon runs and maps, the dungeon journal, guild roster with location sharing, professions, and an optional guild website.
+## Author: playeronefox
+## Version: 2.0.0
+## SavedVariables: KinfolkDB, NinthTailDB, NinthTailLogDB
+## OptionalDeps: EllesmereUI
+## X-License: MIT
+## IconTexture: Interface\Icons\Spell_Nature_SpiritWolf
+## AddonCompartmentFunc: Kinfolk_OnAddonCompartmentClick
+## AddonCompartmentFuncOnEnter: Kinfolk_OnAddonCompartmentEnter
+## AddonCompartmentFuncOnLeave: Kinfolk_OnAddonCompartmentLeave
+
+# core: saved data, run lifecycle, module + view registries, look, local stats
+Core\Core.lua
+Core\Style.lua
+Core\Stats.lua
+
+# written by the companion app: the website's shop, costs and your orders
+Data\SiteData.lua
+
+# recorders: each adds its own fields to a run
+Modules\Party.lua
+Modules\Bosses.lua
+Modules\Meter.lua
+Modules\Route.lua
+
+# crafting: not tied to runs
+Modules\Professions.lua
+Modules\Inventory.lua
+Modules\GuildShare.lua
+Modules\Journal.lua
+Modules\Roster.lua
+Modules\Locate.lua
+
+# dashboard: widgets, window, run detail views, then pages
+UI\StatPanel.lua
+UI\Widgets.lua
+UI\MapCanvas.lua
+UI\Window.lua
+Views\Overview.lua
+Views\Fights.lua
+Views\Map.lua
+UI\Pages\SitePage.lua
+UI\Pages\Overview.lua
+UI\Pages\Runs.lua
+UI\Pages\Journal.lua
+UI\Pages\Players.lua
+UI\Pages\Shop.lua
+UI\Pages\Costs.lua
+UI\Pages\Crafters.lua
+UI\Pages\Orders.lua
+UI\Pages\Guild.lua
+UI\Welcome.lua
+UI\MapPins.lua
+UI\Settings.lua

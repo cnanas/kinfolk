@@ -1,0 +1,271 @@
+-- Kinfolk: core.
+-- Owns the saved data and the life of a run (start, finish, resume after a
+-- reload). Everything that gets recorded *during* a run lives in a module
+-- under Modules/, and everything shown about a run lives in a view under
+-- Views/. See ARCHITECTURE.md for how to add either.
+
+local ADDON, ns = ...
+
+-- Bump SCHEMA when the shape of a saved run changes, and teach the module
+-- that owns the changed data to upgrade older runs in its Migrate hook.
+ns.SCHEMA = 3
+
+ns.DEFAULTS = { track = true, chat = true, remind = true, keep = 100, scale = 1, share = true, offer = false, shareLocation = true, welcomed = false }
+ns.settings = setmetatable({}, { __index = ns.DEFAULTS }) -- replaced at load
+
+local db, run
+local frame = CreateFrame("Frame")
+
+-- force = true for answers to slash commands, which always show
+function ns.say(msg, force)
+  if force or ns.settings.chat then print("|cff7fe3c4Kinfolk:|r " .. msg) end
+end
+local say = ns.say
+
+function ns.IsSecret(v) return issecretvalue ~= nil and issecretvalue(v) end
+
+-- "Name-Realm" for the logged-in character (realm without spaces, as the game writes it in chat)
+function ns.CharKey()
+  local name = UnitName("player")
+  local realm = (GetNormalizedRealmName and GetNormalizedRealmName()) or (GetRealmName() or ""):gsub("%s", "")
+  return name .. "-" .. realm
+end
+
+-- Saved data that isn't tied to a dungeon run: professions, inventory, guild crafters.
+-- KinfolkDB.crafting = { chars = { [charKey] = {...} }, guild = { [charKey] = {...} } }
+function ns.Crafting()
+  local db = ns.db
+  if not db then return nil end
+  db.crafting = db.crafting or {}
+  db.crafting.chars = db.crafting.chars or {}
+  db.crafting.guild = db.crafting.guild or {}
+  return db.crafting
+end
+
+function ns.MyCrafting()
+  local c = ns.Crafting()
+  if not c then return nil end
+  local key = ns.CharKey()
+  local me = c.chars[key]
+  if not me then
+    local _, class = UnitClass("player")
+    me = { name = UnitName("player"), realm = (GetRealmName()), class = class, faction = (UnitFactionGroup("player")), professions = {} }
+    c.chars[key] = me
+  end
+  me.level = UnitLevel("player")
+  me.guild = GetGuildInfo("player")
+  me.offer = ns.settings.offer and true or false -- opted in to the guild shop
+  return me
+end
+
+-- UI files set ns.RefreshUI; anything that changes run data calls ns.Changed()
+function ns.Changed() if ns.RefreshUI then ns.RefreshUI() end end
+
+-- ---- modules ---------------------------------------------------------------
+-- A module is a table with a `name` and any of:
+--   events = { EVENT_NAME = function(self, run, ...) end }  (run may be nil)
+--   OnLoad(self, db)          saved data is ready
+--   OnRunStart(self, run)     a run just started; add your fields to it
+--   OnCombatEnd(self, run)    a fight ended and the meter has settled
+--   OnRunFinish(self, run)    last chance to record before the run is saved
+--   Migrate(self, run, from)  upgrade a run saved with an older schema
+-- Hooks are isolated: an error in one module is reported and the rest carry on.
+
+ns.modules = {}
+local handlers = {} -- event -> { module, ... }
+local CORE_EVENTS = { ADDON_LOADED = true, PLAYER_ENTERING_WORLD = true, ZONE_CHANGED_NEW_AREA = true, PLAYER_REGEN_ENABLED = true }
+
+local function call(mod, fn, ...)
+  local ok, err = pcall(fn, mod, ...)
+  if not ok then geterrorhandler()(("Kinfolk [%s]: %s"):format(mod.name or "?", tostring(err))) end
+end
+
+local function fire(hook, ...)
+  for _, mod in ipairs(ns.modules) do
+    if mod[hook] then call(mod, mod[hook], ...) end
+  end
+end
+
+function ns.RegisterModule(mod)
+  ns.modules[#ns.modules + 1] = mod
+  for event in pairs(mod.events or {}) do
+    if not handlers[event] then
+      handlers[event] = {}
+      if not CORE_EVENTS[event] then frame:RegisterEvent(event) end
+    end
+    table.insert(handlers[event], mod)
+  end
+  return mod
+end
+
+-- ---- runs ------------------------------------------------------------------
+
+-- Keys starting with "_" are scratch space for modules during a run and are
+-- dropped when the run is saved.
+local function stripScratch(r)
+  for k in pairs(r) do
+    if type(k) == "string" and k:sub(1, 1) == "_" then r[k] = nil end
+  end
+end
+
+local function migrate(r)
+  local from = r.schema or 1
+  if from < ns.SCHEMA then
+    fire("Migrate", r, from)
+    r.schema = ns.SCHEMA
+  end
+end
+
+local function prune()
+  local keep = ns.settings.keep or 0
+  if keep > 0 then
+    while #db.runs > keep do table.remove(db.runs, 1) end
+  end
+end
+ns.Prune = prune
+
+local function startRun(name, difficultyName, instanceID)
+  local now = GetServerTime()
+  run = {
+    id = string.format("%d-%s", now, tostring(instanceID)),
+    schema = ns.SCHEMA,
+    dungeon = name,
+    difficulty = difficultyName,
+    instanceID = instanceID,
+    startTime = now,
+    loggedBy = UnitName("player"),
+    addonVersion = (C_AddOns and C_AddOns.GetAddOnMetadata or GetAddOnMetadata)(ADDON, "Version"),
+  }
+  db.current = run
+  fire("OnRunStart", run)
+  say("Run started: " .. name .. ". Good luck in there!")
+  ns.Changed()
+end
+
+local function saveRun(r, reason, endTime)
+  r.endTime = endTime
+  r.duration = endTime - r.startTime
+  r.endReason = reason
+  stripScratch(r)
+  r.pendingFinish = nil
+  table.insert(db.runs, r)
+  prune()
+end
+
+local function finishRun(reason)
+  if not run then return end
+  if InCombatLockdown() then run.pendingFinish = reason; return end
+  fire("OnRunFinish", run)
+  local r = run
+  saveRun(r, reason, GetServerTime())
+  db.current, run = nil, nil
+  say(string.format("Run saved: %s (%s).%s", r.dungeon, ns.UI and ns.UI.Time(r.duration) or r.duration .. "s",
+    ns.settings.remind and " Type /kin sync to send it to Discord." or ""))
+  ns.Changed()
+end
+ns.FinishRun = finishRun
+
+local function checkZone()
+  local name, instanceType, _, difficultyName, _, _, _, instanceID = GetInstanceInfo()
+  if instanceType == "party" then
+    if run and run.instanceID ~= instanceID then finishRun("changed dungeon") end
+    if not run and ns.settings.track then startRun(name, difficultyName, instanceID) end
+  elseif run then
+    finishRun("left dungeon")
+  end
+end
+
+local function onLoad()
+  -- earlier versions were called Ninth Tail (and before that Ninth Tail Log): carry their saved data over
+  KinfolkDB = KinfolkDB or NinthTailDB or NinthTailLogDB or { runs = {} }
+  NinthTailDB, NinthTailLogDB = nil, nil
+  db = KinfolkDB
+  db.runs = db.runs or {}
+  db.settings = db.settings or {}
+  for k, v in pairs(ns.DEFAULTS) do if db.settings[k] == nil then db.settings[k] = v end end
+  ns.settings, ns.db = db.settings, db
+
+  for _, r in ipairs(db.runs) do migrate(r) end
+  run = db.current -- resume after /reload mid-dungeon
+  if run then migrate(run) end
+  fire("OnLoad", db)
+
+  -- a run left open from an old session (logged out inside a dungeon) is closed
+  -- at the last time we know of rather than stretching to now
+  if run and GetServerTime() - run.startTime > 4 * 3600 then
+    saveRun(run, "abandoned", run.lastSeen or run.startTime)
+    db.current, run = nil, nil
+  end
+end
+
+frame:SetScript("OnEvent", function(_, event, ...)
+  if event == "ADDON_LOADED" then
+    if ... ~= ADDON then return end
+    onLoad()
+  elseif event == "PLAYER_ENTERING_WORLD" or event == "ZONE_CHANGED_NEW_AREA" then
+    C_Timer.After(1, checkZone)
+  elseif event == "PLAYER_REGEN_ENABLED" then
+    if run then run.lastSeen = GetServerTime() end
+    -- give the damage meter a moment to close the fight before modules read it
+    C_Timer.After(1.5, function()
+      if run then fire("OnCombatEnd", run); ns.Changed() end
+      if run and run.pendingFinish then finishRun(run.pendingFinish) end
+    end)
+  end
+  local list = handlers[event]
+  if list and db then
+    for _, mod in ipairs(list) do call(mod, mod.events[event], run, ...) end
+  end
+end)
+for event in pairs(CORE_EVENTS) do frame:RegisterEvent(event) end
+
+-- ---- public API ------------------------------------------------------------
+
+function ns.GetCurrentRun() return run end
+function ns.GetRuns() return db and db.runs or {} end
+
+function ns.DeleteRun(id)
+  if not db then return end
+  for i = #db.runs, 1, -1 do
+    if db.runs[i].id == id then table.remove(db.runs, i) end
+  end
+  ns.Changed()
+end
+
+function ns.Sync()
+  if InCombatLockdown() then say("Wait until combat ends.", true) else ReloadUI() end
+end
+
+-- status lines modules can add to /kin status: ns.statusLines[#+1] = function(run) return "..." end
+ns.statusLines = {}
+
+SLASH_KINFOLK1 = "/kin"
+SLASH_KINFOLK2 = "/kinfolk"
+SLASH_KINFOLK3 = "/nt"  -- older commands from when this was Ninth Tail keep working
+SLASH_KINFOLK4 = "/ntl"
+SlashCmdList.KINFOLK = function(msg)
+  msg = strtrim((msg or ""):lower())
+  if msg == "" or msg == "log" or msg == "show" then
+    if ns.ToggleWindow then ns.ToggleWindow() end
+  elseif msg == "options" or msg == "settings" or msg == "config" then
+    if ns.OpenSettings then ns.OpenSettings() end
+  elseif msg == "end" then
+    if run then finishRun("ended manually") else say("No run in progress.", true) end
+  elseif msg == "sync" then
+    ns.Sync()
+  elseif msg == "maptest" then
+    if ns.MapTest then ns.MapTest() end
+  elseif msg == "welcome" then
+    if ns.ShowWelcome then ns.ShowWelcome() end
+  elseif msg == "journaltest" or msg == "journalscan" then
+    if ns.JournalTest then ns.JournalTest() end
+  elseif msg == "status" then
+    if run then say("In " .. run.dungeon .. ".", true) else say(#db.runs .. " runs saved. No run in progress.", true) end
+    for _, line in ipairs(ns.statusLines) do
+      local ok, text = pcall(line, run)
+      if ok and text then say(text, true) end
+    end
+  else
+    say("/kin (dashboard) · /kin options · /kin status · /kin end · /kin sync · /kin maptest · /kin journaltest · /kin welcome", true)
+  end
+end
