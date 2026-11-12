@@ -6,7 +6,8 @@
   "main": "companion.js",
   "scripts": {
     "start": "node companion.js",
-    "dry-run": "node companion.js --dry-run --once"
+    "dry-run": "node companion.js --dry-run --once",
+    "sync": "node companion.js --once"
   },
   "dependencies": {
     "luaparse": "^0.3.1"

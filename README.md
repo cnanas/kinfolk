@@ -50,7 +50,7 @@ Edit `config.json`:
 - `guildName` and `botName`: how posts are labelled.
 - Leave `siteUrl` and `siteKey` empty.
 
-Check what it would post with `npm run dry-run`, then leave `npm start` running while you play. It remembers what it has posted, so nothing is posted twice.
+Check what it would post with `npm run dry-run`, then leave `npm start` running while you play, or run `npm run sync` afterwards to send everything you missed in one go. It remembers what it has posted, so nothing is posted twice.
 
 ## Guild websites: coming soon
 
