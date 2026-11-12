@@ -8,7 +8,6 @@
 
 local _, ns = ...
 local db
-local quiet = false           -- swallow the "Total time played" chat lines we asked for
 local waiting                 -- level-up waiting for its /played answer
 local lastAsk = 0
 local shownWithoutTime     -- level whose card showed before /played answered
@@ -20,22 +19,26 @@ local function me()
   return db.levels[k]
 end
 
--- Ask the server for /played without printing it in chat.
+-- Ask the server for /played without printing it in chat: the chat windows stop
+-- listening for the answer while we ask, and start again as soon as it arrives
+-- (or after 3 seconds). Another addon's /played request still prints as normal.
+local muted = {}
+local function unmute()
+  for f in pairs(muted) do pcall(f.RegisterEvent, f, "TIME_PLAYED_MSG"); muted[f] = nil end
+end
 local function askPlayed()
   if not RequestTimePlayed or GetTime() - lastAsk < 2 then return end
   lastAsk = GetTime()
-  quiet = true
-  C_Timer.After(3, function() quiet = false end)
+  for i = 1, (NUM_CHAT_WINDOWS or 10) do
+    local f = _G["ChatFrame" .. i]
+    if f and f.IsEventRegistered and f:IsEventRegistered("TIME_PLAYED_MSG") then
+      f:UnregisterEvent("TIME_PLAYED_MSG"); muted[f] = true
+    end
+  end
+  C_Timer.After(3, unmute)
   pcall(RequestTimePlayed)
 end
-
-if ChatFrame_DisplayTimePlayed then
-  local original = ChatFrame_DisplayTimePlayed
-  ChatFrame_DisplayTimePlayed = function(...)
-    if quiet then return end
-    return original(...)
-  end
-end
+ns.UnmutePlayed = unmute
 
 local function statNow()
   local s = {}
@@ -91,6 +94,7 @@ local function onLevelUp(level, hp, mp, _, _, str, agi, sta, int, spi)
 end
 
 local function onPlayed(total, thisLevel)
+  C_Timer.After(0, unmute) -- chat listens again once everyone has seen this answer
   if type(total) ~= "number" or ns.IsSecret(total) then return end
   local m = me()
   if waiting then
