@@ -21,6 +21,9 @@ Features are added as files, not by editing the core.
 | `UI/Settings.lua` | Settings > AddOns page. |
 | `Modules/Relay.lua` | Hands finished runs to a guildmate whose companion is set up (a "courier"); couriers store them in `FoxdenDB.relay`. |
 | `Modules/Atlas.lua` | Where each zone sits on its continent (names + rectangles from the game's map data, `FoxdenDB.atlas`), so the website can draw its own map. |
+| `Modules/Trainer.lua` | Reads the class/profession trainer's full list on each visit (`FoxdenDB.trainers`), skip list, Learn all button. |
+| `Modules/Leveling.lua` | Level-ups: stat gains, time per level from /played (read quietly), guild ding message. |
+| `UI/LevelUp.lua` | The level-up card and guildmate ding toasts. |
 | `UI/CopyRun.lua` | The copy box after a run (`/fox copy`): `FOXDEN1:{json}` for the website's Post a run page. |
 
 ## Add a recorder

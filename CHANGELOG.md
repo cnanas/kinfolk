@@ -2,6 +2,10 @@
 
 ## 2.2.0
 
+- **Trainer page:** visit your class trainer once and Foxden keeps its whole list: what you can learn now, what's coming and at which level, and the cost. Right-click to skip an ability. A **Learn all** button at the trainer learns everything you haven't skipped.
+- **Level-up card:** your stat gains, how long the level took (and your fastest), what's new at your trainer, and guildmates near your level who are online. `/fox levelup` shows a preview.
+- **Guild dings:** guildmates with Foxden see a small note when you level up, and you see theirs. Both can be turned off in Settings.
+- **Leveling page:** every level-up Foxden recorded, with time and gains.
 - **Crafting is free:** no fee and no cash-on-delivery. You bring the materials, a guildmate makes it. The "Request" page (was Shop) shows roughly what the materials cost at the auction house, as a guide; "Orders" are now "Requests".
 - **Your runs reach the website even without the companion app.** Foxden hands finished runs to a guildmate who runs the companion, the next time you're both online. `/fox status` shows how many are waiting.
 - **Copy a run:** after each run, Foxden shows it ready to copy (Ctrl+C) and paste on your guild website's "Post a run" page. `/fox copy` opens it again; you can turn it off in Settings.

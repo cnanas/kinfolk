@@ -25,7 +25,7 @@ function ns.RegisterPage(page)
   table.sort(ns.pages, function(a, b) return (a.order or 50) < (b.order or 50) end)
 end
 
-local SECTIONS = { { key = "log", label = "Dungeon log" }, { key = "craft", label = "Crafting" }, { key = "guild", label = "Guild" } }
+local SECTIONS = { { key = "log", label = "Dungeon log" }, { key = "char", label = "Character" }, { key = "craft", label = "Crafting" }, { key = "guild", label = "Guild" } }
 
 -- ---- helpers pages and views share -------------------------------------------
 

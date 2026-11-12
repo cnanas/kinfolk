@@ -9,6 +9,8 @@ Foxden works on its own in game. The optional companion app posts each run to yo
 - **Dungeon log.** Records each run: dungeon and difficulty, total time and time in combat, the party, boss kills, wipes, and per-player totals from the game's built-in damage meter (damage, healing, interrupts, dispels, damage taken, deaths). Only one person in the group needs the addon.
 - **Journal.** Every dungeon's bosses, abilities and loot, read from the game's own Encounter Journal.
 - **Crafting.** Shares your professions and recipes with guildmates over guild addon messages, so anyone can see who can make what.
+- **Trainer.** Visit your class trainer once and Foxden lists what you can learn now and next, with levels and costs, plus a **Learn all** button.
+- **Leveling.** A level-up card with your gains, how long the level took and what's new at your trainer; guildmates see a small note when you ding.
 - **Roster.** Name, rank, level, class, online status and zone. Guild notes are never collected.
 - **Location sharing (optional).** Guildmates who opt in appear as dots on the world map. Positions are never shared from inside instances.
 
@@ -29,6 +31,8 @@ The first time you log in, Foxden asks what you want to share. Nothing is sent u
 - `/fox status`: current run progress
 - `/fox end`: finish the current run without leaving the dungeon
 - `/fox sync`: reload so the run is saved to disk (and posted, if the companion is running)
+- `/fox trainer`: your class abilities, now and next
+- `/fox levelup`: preview the level-up card
 - `/fox welcome`: change what you share
 
 WoW only writes saved data to disk on `/reload` or logout, so use `/fox sync` after a run if you want it posted straight away.

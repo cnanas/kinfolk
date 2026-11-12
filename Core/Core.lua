@@ -10,7 +10,7 @@ local ADDON, ns = ...
 -- that owns the changed data to upgrade older runs in its Migrate hook.
 ns.SCHEMA = 3
 
-ns.DEFAULTS = { track = true, chat = true, remind = true, keep = 100, scale = 1, share = true, offer = false, shareLocation = true, welcomed = false, copyPopup = true }
+ns.DEFAULTS = { track = true, chat = true, remind = true, keep = 100, scale = 1, share = true, offer = false, shareLocation = true, welcomed = false, copyPopup = true, levelCard = true, shareLevelUps = true, guildDings = true, learnAll = true, levelScreenshot = false }
 ns.settings = setmetatable({}, { __index = ns.DEFAULTS }) -- replaced at load
 
 local db, run
@@ -254,6 +254,10 @@ SlashCmdList.FOXDEN = function(msg)
     ns.Sync()
   elseif msg == "maptest" then
     if ns.MapTest then ns.MapTest() end
+  elseif msg == "levelup" then
+    if ns.ShowLevelUp then ns.ShowLevelUp(UnitLevel("player"), { str = 3, agi = 2, sta = 4, int = 1, spi = 1, hp = 22, mp = 30 }, 2700, true) end
+  elseif msg == "trainer" then
+    if ns.OpenPage then ns.OpenPage("trainer") end
   elseif msg == "copy" then
     if ns.ShowCopyRun then ns.ShowCopyRun() end
   elseif msg == "welcome" then
@@ -267,6 +271,6 @@ SlashCmdList.FOXDEN = function(msg)
       if ok and text then say(text, true) end
     end
   else
-    say("/fox (dashboard) · /fox options · /fox status · /fox end · /fox sync · /fox copy · /fox maptest · /fox journaltest · /fox welcome", true)
+    say("/fox (dashboard) · /fox options · /fox status · /fox end · /fox sync · /fox copy · /fox trainer · /fox levelup · /fox maptest · /fox journaltest · /fox welcome", true)
   end
 end

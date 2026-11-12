@@ -38,6 +38,8 @@ Modules\Locate.lua
 Modules\Atlas.lua
 Modules\Version.lua
 Modules\Relay.lua
+Modules\Trainer.lua
+Modules\Leveling.lua
 
 # dashboard: widgets, window, run detail views, then pages
 UI\StatPanel.lua
@@ -57,7 +59,10 @@ UI\Pages\Costs.lua
 UI\Pages\Crafters.lua
 UI\Pages\Orders.lua
 UI\Pages\Guild.lua
+UI\Pages\Trainer.lua
+UI\Pages\Leveling.lua
 UI\Welcome.lua
 UI\CopyRun.lua
+UI\LevelUp.lua
 UI\MapPins.lua
 UI\Settings.lua

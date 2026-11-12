@@ -86,7 +86,19 @@ local r3 = add(UI.Toggle(panel, CONTENT_W, "Sync reminder",
 local r4 = add(UI.Toggle(panel, CONTENT_W, "Show the copy box after runs",
   "If you don't run the companion app: the run, ready to paste on the guild website.", get("copyPopup"), set("copyPopup")), r3)
 
-local sC = section("Crafting", r4)
+local sL = section("Leveling", r4)
+local rL1 = add(UI.Toggle(panel, CONTENT_W, "Show the level-up card",
+  "Your gains, how long the level took, what's new at your trainer and guildmates near your level.", get("levelCard"), set("levelCard")), sL, true)
+local rL2 = add(UI.Toggle(panel, CONTENT_W, "Tell the guild when I level up",
+  "Guildmates with Foxden see a small \"reached level\" note. Only your level is sent.", get("shareLevelUps"), set("shareLevelUps")), rL1)
+local rL3 = add(UI.Toggle(panel, CONTENT_W, "Show when guildmates level up",
+  "A small note at the top of the screen for a few seconds.", get("guildDings"), set("guildDings")), rL2)
+local rL4 = add(UI.Toggle(panel, CONTENT_W, "\"Learn all\" button at your trainer",
+  "Learns every available ability in one click, except ones you skipped on the Trainer page.", get("learnAll"), set("learnAll")), rL3)
+local rL5 = add(UI.Toggle(panel, CONTENT_W, "Screenshot every 10 levels",
+  "Takes a screenshot with the level-up card on milestone levels.", get("levelScreenshot"), set("levelScreenshot")), rL4)
+
+local sC = section("Crafting", rL5)
 local rC = add(UI.Toggle(panel, CONTENT_W, "Share my professions with the guild",
   "Guildmates with the addon see what you can craft. Bags and bank are never shared.", get("share"), function(v)
     ns.settings.share = v
