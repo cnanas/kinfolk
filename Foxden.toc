@@ -1,11 +1,12 @@
 ## Interface: 16001
 ## Title: Foxden
-## Notes: Your guild's companion: dungeon runs and maps, the dungeon journal, guild roster with location sharing, professions, and an optional guild website.
+## Notes: Guild companion: dungeon run log, the dungeon journal, who can craft what, and the guild roster with optional location sharing.
 ## Author: playeronefox
 ## Version: 2.1.0
 ## SavedVariables: FoxdenDB
 ## OptionalDeps: EllesmereUI
 ## X-License: MIT
+## X-Curse-Project-ID: 1801010
 ## IconTexture: Interface\Icons\Spell_Nature_SpiritWolf
 ## AddonCompartmentFunc: Foxden_OnAddonCompartmentClick
 ## AddonCompartmentFuncOnEnter: Foxden_OnAddonCompartmentEnter
