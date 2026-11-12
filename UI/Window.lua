@@ -1,4 +1,4 @@
--- Kinfolk: the dashboard window (/kin). Resizable, with a sidebar of pages in
+-- Foxden: the dashboard window (/fox). Resizable, with a sidebar of pages in
 -- two sections, like the website. Pages live in UI/Pages/*.lua and register with
 -- ns.RegisterPage; the run detail tabs (Overview, Fights, Map) are views in
 -- Views/*.lua registered with ns.RegisterView and shown on the Runs page.
@@ -76,14 +76,14 @@ local function layout()
   local w, h = W.content:GetWidth(), W.content:GetHeight()
   if current.Layout then
     local ok, err = pcall(current.Layout, current, w, h)
-    if not ok then geterrorhandler()("Kinfolk page " .. current.key .. ": " .. tostring(err)) end
+    if not ok then geterrorhandler()("Foxden page " .. current.key .. ": " .. tostring(err)) end
   end
 end
 
 local function refresh(arg)
   if not current or not current.frame then return end
   local ok, err = pcall(current.Refresh, current, arg)
-  if not ok then geterrorhandler()("Kinfolk page " .. current.key .. ": " .. tostring(err)) end
+  if not ok then geterrorhandler()("Foxden page " .. current.key .. ": " .. tostring(err)) end
 end
 
 function ns.OpenPage(key, arg)
@@ -98,7 +98,7 @@ function ns.OpenPage(key, arg)
     page.frame = CreateFrame("Frame", nil, W.content)
     page.frame:SetAllPoints()
     local ok, err = pcall(page.Build, page, page.frame)
-    if not ok then geterrorhandler()("Kinfolk page " .. key .. ": " .. tostring(err)) end
+    if not ok then geterrorhandler()("Foxden page " .. key .. ": " .. tostring(err)) end
   end
   page.frame:Show()
   ns.settings.page = key
@@ -112,7 +112,7 @@ function ns.OpenPage(key, arg)
 end
 
 local function build()
-  W = CreateFrame("Frame", "KinfolkFrame", UIParent)
+  W = CreateFrame("Frame", "FoxdenFrame", UIParent)
   local saved = ns.settings.window
   W:SetSize(saved and saved.w or 1000, saved and saved.h or 640)
   if saved and saved.point then W:SetPoint(saved.point, UIParent, saved.rel or saved.point, saved.x or 0, saved.y or 0) else W:SetPoint("CENTER") end
@@ -127,7 +127,7 @@ local function build()
   W:Hide()
   UI.Fill(W, C.bg)
   UI.Border(W, { 1, 1, 1, 0.10 })
-  tinsert(UISpecialFrames, "KinfolkFrame") -- Escape closes it
+  tinsert(UISpecialFrames, "FoxdenFrame") -- Escape closes it
 
   -- header (drag to move)
   local header = CreateFrame("Frame", nil, W)
@@ -139,7 +139,7 @@ local function build()
   local accent = header:CreateTexture(nil, "ARTWORK")
   accent:SetSize(3, 18); accent:SetPoint("LEFT", PAD, 0)
   UI.Accented(accent)
-  local title = UI.Text(header, 15); title:SetPoint("LEFT", accent, "RIGHT", 10, 0); title:SetText("Kinfolk")
+  local title = UI.Text(header, 15); title:SetPoint("LEFT", accent, "RIGHT", 10, 0); title:SetText("Foxden")
   W.siteAge = UI.Text(header, 11, C.faint); W.siteAge:SetPoint("LEFT", title, "RIGHT", 12, -1)
   local close = UI.CloseButton(header, function() W:Hide() end)
   close:SetPoint("RIGHT", -12, 0)
@@ -214,7 +214,7 @@ local function build()
   end)
   W:SetScript("OnHide", function() if ticker then ticker:Cancel(); ticker = nil end end)
 
-  StaticPopupDialogs["KINFOLK_DELETE"] = {
+  StaticPopupDialogs["FOXDEN_DELETE"] = {
     text = "Delete this run from the log?\n\nIf it was already posted, it stays in Discord and on the website.",
     button1 = DELETE or "Delete", button2 = CANCEL or "Cancel",
     OnAccept = function(_, id) ns.DeleteRun(id) end,
@@ -235,12 +235,12 @@ function ns.ToggleWindow()
 end
 
 -- Minimap addon button (the addon compartment) entry
-function Kinfolk_OnAddonCompartmentClick(_, button)
+function Foxden_OnAddonCompartmentClick(_, button)
   if button == "RightButton" then ns.OpenSettings() else ns.ToggleWindow() end
 end
-function Kinfolk_OnAddonCompartmentEnter(_, frame)
+function Foxden_OnAddonCompartmentEnter(_, frame)
   GameTooltip:SetOwner(frame, "ANCHOR_LEFT")
-  GameTooltip:SetText("Kinfolk")
+  GameTooltip:SetText("Foxden")
   local run = ns.GetCurrentRun()
   if run then GameTooltip:AddLine("In progress: " .. (run.dungeon or "?"), 1, 1, 1) end
   GameTooltip:AddLine(#ns.GetRuns() .. " runs logged", 0.7, 0.7, 0.7)
@@ -249,4 +249,4 @@ function Kinfolk_OnAddonCompartmentEnter(_, frame)
   GameTooltip:AddLine("Right-click for settings", 0.5, 0.9, 0.77)
   GameTooltip:Show()
 end
-function Kinfolk_OnAddonCompartmentLeave() GameTooltip:Hide() end
+function Foxden_OnAddonCompartmentLeave() GameTooltip:Hide() end

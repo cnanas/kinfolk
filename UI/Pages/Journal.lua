@@ -131,7 +131,7 @@ local function detailText(e, boss)
   else
     lines[#lines + 1] = dim .. "No fights against this boss in your logged runs yet.|r"
   end
-  if not j then lines[#lines + 1] = "\n" .. dim .. "Description, abilities and loot come from the game's journal: type /kin journaltest.|r" end
+  if not j then lines[#lines + 1] = "\n" .. dim .. "Description, abilities and loot come from the game's journal: type /fox journaltest.|r" end
   return table.concat(lines, "\n")
 end
 
@@ -187,7 +187,7 @@ function page:Build(f)
   end)
 
   self.empty = UI.Text(f, 13, C.dim, "CENTER"); self.empty:SetWordWrap(true)
-  self.empty:SetText("No dungeons yet.\n\nType /kin journaltest to read the game's dungeon journal, or run a dungeon and it appears here.")
+  self.empty:SetText("No dungeons yet.\n\nType /fox journaltest to read the game's dungeon journal, or run a dungeon and it appears here.")
 end
 
 function page:Layout(w, h)
@@ -261,7 +261,7 @@ function page:Refresh()
     end
   end
   local art = self.map:Draw(selFloor, self.mapW or 400, self.mapH or 267, pins)
-  self.mapNote:SetText(#floors == 0 and "No map floors known yet: run the dungeon or type /kin journaltest."
+  self.mapNote:SetText(#floors == 0 and "No map floors known yet: run the dungeon or type /fox journaltest."
     or (#pins == 0 and "No boss locations on this floor." or "Numbers are the boss order. Click a pin or a name for details.") .. (art and "" or ""))
 
   local boss

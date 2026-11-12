@@ -3,10 +3,10 @@
 -- and the website can show every dungeon, even ones nobody has run yet.
 --
 -- Forever's journal may not include everything (abilities and loot in
--- particular); every call is protected and `/kin journaltest` reports what this
+-- particular); every call is protected and `/fox journaltest` reports what this
 -- client actually has.
 --
--- KinfolkDB.journal = {
+-- FoxdenDB.journal = {
 --   build, scannedAt, stats = { dungeons, bosses, sections, loot, pins },
 --   dungeons = { { id, name, desc, map, floors = { { map, name } },
 --     bosses = { { id, encounterID, name, desc, loot = { itemID, ... }, pins = { { m, x, y } },
@@ -196,7 +196,7 @@ local function report(j)
   ns.say("  Abilities: " .. (s.sections > 0 and ("YES, " .. s.sections .. " entries") or "none in this client's journal"), true)
   ns.say("  Loot tables: " .. (s.loot > 0 and ("YES, " .. s.loot .. " items") or "none in this client's journal"), true)
   ns.say("  Boss map pins: " .. (s.pins > 0 and ("YES, " .. s.pins) or "none"), true)
-  ns.say("Open /kin and pick Journal. Sync to send it to the website.", true)
+  ns.say("Open /fox and pick Journal. Sync to send it to the website.", true)
 end
 
 function ns.JournalTest()

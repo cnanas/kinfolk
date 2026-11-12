@@ -1,4 +1,4 @@
--- Kinfolk: core.
+-- Foxden: core.
 -- Owns the saved data and the life of a run (start, finish, resume after a
 -- reload). Everything that gets recorded *during* a run lives in a module
 -- under Modules/, and everything shown about a run lives in a view under
@@ -18,7 +18,7 @@ local frame = CreateFrame("Frame")
 
 -- force = true for answers to slash commands, which always show
 function ns.say(msg, force)
-  if force or ns.settings.chat then print("|cff7fe3c4Kinfolk:|r " .. msg) end
+  if force or ns.settings.chat then print("|cff7fe3c4Foxden:|r " .. msg) end
 end
 local say = ns.say
 
@@ -32,7 +32,7 @@ function ns.CharKey()
 end
 
 -- Saved data that isn't tied to a dungeon run: professions, inventory, guild crafters.
--- KinfolkDB.crafting = { chars = { [charKey] = {...} }, guild = { [charKey] = {...} } }
+-- FoxdenDB.crafting = { chars = { [charKey] = {...} }, guild = { [charKey] = {...} } }
 function ns.Crafting()
   local db = ns.db
   if not db then return nil end
@@ -77,7 +77,7 @@ local CORE_EVENTS = { ADDON_LOADED = true, PLAYER_ENTERING_WORLD = true, ZONE_CH
 
 local function call(mod, fn, ...)
   local ok, err = pcall(fn, mod, ...)
-  if not ok then geterrorhandler()(("Kinfolk [%s]: %s"):format(mod.name or "?", tostring(err))) end
+  if not ok then geterrorhandler()(("Foxden [%s]: %s"):format(mod.name or "?", tostring(err))) end
 end
 
 local function fire(hook, ...)
@@ -160,7 +160,7 @@ local function finishRun(reason)
   saveRun(r, reason, GetServerTime())
   db.current, run = nil, nil
   say(string.format("Run saved: %s (%s).%s", r.dungeon, ns.UI and ns.UI.Time(r.duration) or r.duration .. "s",
-    ns.settings.remind and " Type /kin sync to send it to Discord." or ""))
+    ns.settings.remind and " Type /fox sync to send it to Discord." or ""))
   ns.Changed()
 end
 ns.FinishRun = finishRun
@@ -176,10 +176,8 @@ local function checkZone()
 end
 
 local function onLoad()
-  -- earlier versions were called Ninth Tail (and before that Ninth Tail Log): carry their saved data over
-  KinfolkDB = KinfolkDB or NinthTailDB or NinthTailLogDB or { runs = {} }
-  NinthTailDB, NinthTailLogDB = nil, nil
-  db = KinfolkDB
+    FoxdenDB = FoxdenDB or { runs = {} }
+  db = FoxdenDB
   db.runs = db.runs or {}
   db.settings = db.settings or {}
   for k, v in pairs(ns.DEFAULTS) do if db.settings[k] == nil then db.settings[k] = v end end
@@ -236,14 +234,13 @@ function ns.Sync()
   if InCombatLockdown() then say("Wait until combat ends.", true) else ReloadUI() end
 end
 
--- status lines modules can add to /kin status: ns.statusLines[#+1] = function(run) return "..." end
+-- status lines modules can add to /fox status: ns.statusLines[#+1] = function(run) return "..." end
 ns.statusLines = {}
 
-SLASH_KINFOLK1 = "/kin"
-SLASH_KINFOLK2 = "/kinfolk"
-SLASH_KINFOLK3 = "/nt"  -- older commands from when this was Ninth Tail keep working
-SLASH_KINFOLK4 = "/ntl"
-SlashCmdList.KINFOLK = function(msg)
+SLASH_FOXDEN1 = "/fox"
+SLASH_FOXDEN2 = "/foxden"
+SLASH_FOXDEN3 = "/fd"
+SlashCmdList.FOXDEN = function(msg)
   msg = strtrim((msg or ""):lower())
   if msg == "" or msg == "log" or msg == "show" then
     if ns.ToggleWindow then ns.ToggleWindow() end
@@ -266,6 +263,6 @@ SlashCmdList.KINFOLK = function(msg)
       if ok and text then say(text, true) end
     end
   else
-    say("/kin (dashboard) · /kin options · /kin status · /kin end · /kin sync · /kin maptest · /kin journaltest · /kin welcome", true)
+    say("/fox (dashboard) · /fox options · /fox status · /fox end · /fox sync · /fox maptest · /fox journaltest · /fox welcome", true)
   end
 end

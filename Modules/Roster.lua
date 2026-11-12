@@ -2,7 +2,7 @@
 -- class, online, last seen, and zone (online members: where they are now;
 -- offline: where they logged out). Notes are deliberately left out.
 --
--- KinfolkDB.roster = { guild, at, members = { { name, rank, rankIndex, level, class, zone, online, mobile, seenHours }, ... } }
+-- FoxdenDB.roster = { guild, at, members = { { name, rank, rankIndex, level, class, zone, online, mobile, seenHours }, ... } }
 
 local _, ns = ...
 local pending, lastRequest = false, 0

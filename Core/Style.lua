@@ -1,4 +1,4 @@
--- Kinfolk: shared look.
+-- Foxden: shared look.
 -- Flat dark surfaces, 1px hairlines, one accent color. When EllesmereUI is
 -- installed, its skinning API hands us the player's accent color and UI font so
 -- these windows sit comfortably next to the rest of their interface.

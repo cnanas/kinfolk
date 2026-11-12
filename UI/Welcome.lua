@@ -1,6 +1,6 @@
--- Kinfolk: the first-run popup. Asks what to share with the guild. Both
+-- Foxden: the first-run popup. Asks what to share with the guild. Both
 -- start switched on, but nothing is shared until "Save and start" is pressed;
--- closing the window shares nothing and asks again next login. /kin welcome reopens it.
+-- closing the window shares nothing and asks again next login. /fox welcome reopens it.
 
 local _, ns = ...
 local UI = ns.UI
@@ -10,7 +10,7 @@ local W
 local choice = { location = true, professions = true }
 
 local function build()
-  W = CreateFrame("Frame", "KinfolkWelcome", UIParent)
+  W = CreateFrame("Frame", "FoxdenWelcome", UIParent)
   W:SetSize(520, 330)
   W:SetPoint("CENTER", 0, 60)
   W:SetFrameStrata("DIALOG")
@@ -21,16 +21,16 @@ local function build()
   W:SetScript("OnDragStart", W.StartMoving)
   W:SetScript("OnDragStop", W.StopMovingOrSizing)
   UI.Fill(W, C.bg); UI.Border(W, { 1, 1, 1, 0.14 })
-  tinsert(UISpecialFrames, "KinfolkWelcome")
+  tinsert(UISpecialFrames, "FoxdenWelcome")
 
   local accent = W:CreateTexture(nil, "ARTWORK"); accent:SetSize(3, 22); accent:SetPoint("TOPLEFT", 22, -22); UI.Accented(accent)
-  local title = UI.Text(W, 18); title:SetPoint("LEFT", accent, "RIGHT", 10, 0); title:SetText("Welcome to Kinfolk")
+  local title = UI.Text(W, 18); title:SetPoint("LEFT", accent, "RIGHT", 10, 0); title:SetText("Welcome to Foxden")
   local close = UI.CloseButton(W, function() W:Hide() end); close:SetPoint("TOPRIGHT", -10, -10)
   local intro = UI.Text(W, 12, C.dim); intro:SetPoint("TOPLEFT", accent, "BOTTOMLEFT", 0, -14); intro:SetWidth(476); intro:SetWordWrap(true)
-  intro:SetText("Choose what your guild can see. You can change these any time in Settings > AddOns > Kinfolk.")
+  intro:SetText("Choose what your guild can see. You can change these any time in Settings > AddOns > Foxden.")
 
   local r1 = UI.Toggle(W, 476, "Share my location with the guild",
-    "Guildmates with Kinfolk see your zone and position on their map. Never inside dungeons or raids.",
+    "Guildmates with Foxden see your zone and position on their map. Never inside dungeons or raids.",
     function() return choice.location end, function(v) choice.location = v end)
   r1:SetPoint("TOPLEFT", intro, "BOTTOMLEFT", 0, -16)
   local r2 = UI.Toggle(W, 476, "Share my professions with the guild",

@@ -7,13 +7,13 @@
 --
 -- crafting.guild[charKey] = { class, receivedAt, professions = { [name] = { skill, maxSkill, scannedAt, recipes = {...} } } }
 --
--- Messages (prefix "Kinfolk", tab-separated, under 255 bytes each):
+-- Messages (prefix "Foxden", tab-separated, under 255 bytes each):
 --   Q                                        "please share yours"
 --   H <prof> <skill> <max> <count> <scannedAt> <class> <offer 1|0>   start of one profession
 --   I <prof> <tokens>                        recipe chunk: "<itemID>" or "s<spellID>" (no item, e.g. enchants)
 
 local _, ns = ...
-local PREFIX = "Kinfolk"
+local PREFIX = "Foxden"
 local MAX = 240
 local queue, sending = {}, false
 local lastShare, lastAnswer = 0, 0

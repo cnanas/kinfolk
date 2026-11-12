@@ -1,4 +1,4 @@
-# Kinfolk architecture
+# Foxden architecture
 
 Features are added as files, not by editing the core.
 
@@ -9,11 +9,11 @@ Features are added as files, not by editing the core.
 | `Core/Core.lua` | Saved data, starting and finishing runs, resuming after `/reload`, the module and status-line registries, slash commands. |
 | `Core/Style.lua` | The look: colors, text, buttons, switches, steppers, formatting. Takes accent and font from EllesmereUI when present. |
 | `Modules/` | **Recorders.** Each one watches its own game events and writes its own fields on the run. |
-| `UI/Window.lua` | The `/kin` dashboard: resizable window, sidebar, page registry (`ns.RegisterPage`), view registry. |
+| `UI/Window.lua` | The `/fox` dashboard: resizable window, sidebar, page registry (`ns.RegisterPage`), view registry. |
 | `UI/Widgets.lua` | Scrolling list, search box, copyable link box, filter chips. |
 | `UI/Pages/` | **Pages** in the sidebar: Overview, Runs, Journal, Players (Dungeon log); Shop, Costs, Crafters, Orders (Crafting). |
 | `Core/Stats.lua` | Dungeon, player and total statistics from the runs saved in this game. |
-| `Data/SiteData.lua` | Written by the companion: the website's shop, costs and your open orders (`KinfolkSiteData`). Read on /reload. |
+| `Data/SiteData.lua` | Written by the companion: the website's shop, costs and your open orders (`FoxdenSiteData`). Read on /reload. |
 | `UI/StatPanel.lua` | Stat tabs + class-colored bars, reused by views. |
 | `Views/` | **Tabs** in the run detail (Overview, Fights, ...). |
 | `UI/Settings.lua` | Settings > AddOns page. |
@@ -88,6 +88,6 @@ Bump `ns.SCHEMA` in `Core/Core.lua` and upgrade old runs in the owning module's 
 | `stats, segments, combatSeconds, fights` | Meter |
 | `route` | Route |
 
-Not part of a run: `KinfolkDB.journal` (Modules/Journal.lua: the game's Encounter Journal, re-read after patches or with `/kin journaltest`), `KinfolkDB.crafting` (professions, inventory, guild crafters).
+Not part of a run: `FoxdenDB.journal` (Modules/Journal.lua: the game's Encounter Journal, re-read after patches or with `/fox journaltest`), `FoxdenDB.crafting` (professions, inventory, guild crafters).
 
 The companion app reads these from SavedVariables; new fields pass through to `raw` mode untouched.

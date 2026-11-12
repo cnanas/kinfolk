@@ -1,9 +1,9 @@
 {
-  "savedVariablesFile": "/Applications/World of Warcraft/_forever_/WTF/Account/YOUR_ACCOUNT/SavedVariables/Kinfolk.lua",
+  "savedVariablesFile": "/Applications/World of Warcraft/_forever_/WTF/Account/YOUR_ACCOUNT/SavedVariables/Foxden.lua",
   "webhookUrl": "https://discord.com/api/webhooks/XXXX/YYYY",
   "mode": "discord",
   "guildName": "Your guild",
   "siteUrl": "",
   "siteKey": "",
-  "botName": "Kinfolk"
+  "botName": "Foxden"
 }

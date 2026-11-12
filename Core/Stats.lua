@@ -1,4 +1,4 @@
--- Kinfolk: statistics from the runs saved in this game (the website has
+-- Foxden: statistics from the runs saved in this game (the website has
 -- everyone's; in game you see the runs your addon logged).
 
 local _, ns = ...
@@ -89,6 +89,6 @@ end
 
 -- The companion's snapshot of the website (shop, costs, orders), if it has written one.
 function ns.Site()
-  local s = KinfolkSiteData or NinthTailSiteData
+  local s = FoxdenSiteData
   if type(s) == "table" and s.v == 1 then return s end
 end

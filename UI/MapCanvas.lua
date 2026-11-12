@@ -1,4 +1,4 @@
--- Kinfolk: a dungeon floor drawn with the game's own map art, plus numbered
+-- Foxden: a dungeon floor drawn with the game's own map art, plus numbered
 -- pins. Used by the Journal page.
 --   local m = UI.MapCanvas(parent)
 --   m:Draw(uiMapID, width, height, pins)   pins = { { x = 0..1000, y = 0..1000, label, sub, n, on }, ... }

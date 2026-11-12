@@ -1,4 +1,4 @@
-// Kinfolk companion
+// Foxden companion
 // Watches the addon's SavedVariables file and posts each new dungeon run.
 //   mode "discord": posts a formatted embed straight to a Discord webhook
 //   mode "raw":     posts the run as JSON (point it at an n8n webhook)
@@ -111,7 +111,7 @@ function discordPayload(run, site = {}) {
   }
   const wipes = run.wipes || 0;
   return {
-    username: config.botName || 'Kinfolk',
+    username: config.botName || 'Foxden',
     embeds: [{
       title: `🦊 ${run.dungeon}${run.difficulty ? ` · ${run.difficulty}` : ''}`,
       ...(site.url ? { url: site.url } : {}),
@@ -246,7 +246,7 @@ function toLua(v) {
 }
 function siteDataPath() {
   const root = config.savedVariablesFile.split(/[\\/]WTF[\\/]/)[0];
-  const dir = path.join(root, 'Interface', 'AddOns', 'Kinfolk', 'Data');
+  const dir = path.join(root, 'Interface', 'AddOns', 'Foxden', 'Data');
   return fs.existsSync(dir) ? path.join(dir, 'SiteData.lua') : null;
 }
 async function writeSiteData(crafting) {
@@ -264,7 +264,7 @@ async function writeSiteData(crafting) {
     const { at, ...rest } = data; // "at" changes every call; compare the rest
     const hash = createHash('sha256').update(JSON.stringify(rest)).digest('hex');
     if (hash === craftState.exportHash && fs.existsSync(file)) return;
-    fs.writeFileSync(file, `-- Written by the Kinfolk companion. Don't edit: it's replaced after each sync.\nKinfolkSiteData = ${toLua(data)}\n`);
+    fs.writeFileSync(file, `-- Written by the Foxden companion. Don't edit: it's replaced after each sync.\nFoxdenSiteData = ${toLua(data)}\n`);
     craftState.exportHash = hash; saveCraftState();
     console.log(`Updated the addon's shop, costs and orders (${data.shop.length} on offer, ${data.orders.length} open orders). /reload in game to see them.`);
   } catch (err) {
@@ -278,7 +278,7 @@ async function check() {
   try {
     if (!fs.existsSync(config.savedVariablesFile)) { console.log('Waiting for SavedVariables file…'); return; }
     let db;
-    try { const sv = readSavedVariables(config.savedVariablesFile); db = sv.KinfolkDB || sv.NinthTailDB || sv.NinthTailLogDB; }
+    try { const sv = readSavedVariables(config.savedVariablesFile); db = sv.FoxdenDB; }
     catch (err) { console.error('Could not read saved data yet:', err.message); return; }
     const runs = (db && db.runs) || [];
     for (const run of runs) {

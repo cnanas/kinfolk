@@ -1,7 +1,7 @@
 {
-  "name": "kinfolk-companion",
+  "name": "foxden-companion",
   "version": "1.0.0",
-  "description": "Watches Kinfolk's saved data and posts new runs, crafting and the guild roster to your guild's website and Discord.",
+  "description": "Watches Foxden's saved data and posts new runs, crafting and the guild roster to your guild's website and Discord.",
   "type": "module",
   "main": "companion.js",
   "scripts": {

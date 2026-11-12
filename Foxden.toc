@@ -1,15 +1,15 @@
 ## Interface: 16001
-## Title: Kinfolk
+## Title: Foxden
 ## Notes: Your guild's companion: dungeon runs and maps, the dungeon journal, guild roster with location sharing, professions, and an optional guild website.
 ## Author: playeronefox
 ## Version: 2.1.0
-## SavedVariables: KinfolkDB, NinthTailDB, NinthTailLogDB
+## SavedVariables: FoxdenDB
 ## OptionalDeps: EllesmereUI
 ## X-License: MIT
 ## IconTexture: Interface\Icons\Spell_Nature_SpiritWolf
-## AddonCompartmentFunc: Kinfolk_OnAddonCompartmentClick
-## AddonCompartmentFuncOnEnter: Kinfolk_OnAddonCompartmentEnter
-## AddonCompartmentFuncOnLeave: Kinfolk_OnAddonCompartmentLeave
+## AddonCompartmentFunc: Foxden_OnAddonCompartmentClick
+## AddonCompartmentFuncOnEnter: Foxden_OnAddonCompartmentEnter
+## AddonCompartmentFuncOnLeave: Foxden_OnAddonCompartmentLeave
 
 # core: saved data, run lifecycle, module + view registries, look, local stats
 Core\Core.lua

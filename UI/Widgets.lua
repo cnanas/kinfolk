@@ -1,4 +1,4 @@
--- Kinfolk: building blocks for the dashboard pages.
+-- Foxden: building blocks for the dashboard pages.
 
 local _, ns = ...
 local UI = ns.UI

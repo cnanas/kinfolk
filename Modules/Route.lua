@@ -114,7 +114,7 @@ ns.RegisterModule({
   },
 })
 
--- /kin maptest: what this client allows, in one line each.
+-- /fox maptest: what this client allows, in one line each.
 function ns.MapTest()
   local map = bestMap()
   ns.say("Map test" .. (IsInInstance() and " (inside an instance)" or " (outdoors)") .. ":", true)

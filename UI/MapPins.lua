@@ -1,4 +1,4 @@
--- Kinfolk: guildmates who share their location, as class-colored dots on the
+-- Foxden: guildmates who share their location, as class-colored dots on the
 -- world map (with name, zone and how fresh it is on hover). Works on the zone
 -- map and zoomed out to the continent.
 

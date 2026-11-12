@@ -1,4 +1,4 @@
--- Kinfolk: the page under Settings > AddOns.
+-- Foxden: the page under Settings > AddOns.
 
 local ADDON, ns = ...
 local UI = ns.UI
@@ -7,7 +7,7 @@ local C = UI.C
 local CONTENT_W = 560
 
 local panel = CreateFrame("Frame")
-panel.name = "Kinfolk"
+panel.name = "Foxden"
 local rows = {}
 
 local function set(key) return function(v) ns.settings[key] = v; if ns.RefreshUI then ns.RefreshUI() end end end
@@ -19,7 +19,7 @@ accent:SetSize(3, 22); accent:SetPoint("TOPLEFT", 20, -20)
 UI.Accented(accent)
 local title = UI.Text(panel, 20)
 title:SetPoint("LEFT", accent, "RIGHT", 10, 0)
-title:SetText("Kinfolk")
+title:SetText("Foxden")
 local version = UI.Text(panel, 11, C.faint)
 version:SetPoint("LEFT", title, "RIGHT", 10, -2)
 local meta = C_AddOns and C_AddOns.GetAddOnMetadata or GetAddOnMetadata
@@ -92,7 +92,7 @@ local r4 = add(UI.Stepper(panel, CONTENT_W, "Keep runs",
   "Older runs are removed from the game's log. Discord keeps everything.",
   { { 25, "Last 25" }, { 50, "Last 50" }, { 100, "Last 100" }, { 250, "Last 250" }, { 0, "All" } },
   get("keep"), function(v) ns.settings.keep = v; if ns.Prune and ns.db then ns.Prune() end; if ns.RefreshUI then ns.RefreshUI() end end), s2, true)
-add(UI.Stepper(panel, CONTENT_W, "Dashboard scale", "Size of everything in the /kin window. Drag its corner to resize the window itself.",
+add(UI.Stepper(panel, CONTENT_W, "Dashboard scale", "Size of everything in the /fox window. Drag its corner to resize the window itself.",
   { { 0.8, "80%" }, { 0.9, "90%" }, { 1, "100%" }, { 1.1, "110%" }, { 1.2, "120%" }, { 1.3, "130%" } },
   get("scale"), set("scale")), r4)
 
@@ -117,8 +117,8 @@ panel:SetScript("OnShow", function() ns.RefreshSettings() end)
 
 local category
 if Settings and Settings.RegisterCanvasLayoutCategory and Settings.RegisterAddOnCategory then
-  category = Settings.RegisterCanvasLayoutCategory(panel, "Kinfolk")
-  category.ID = "Kinfolk"
+  category = Settings.RegisterCanvasLayoutCategory(panel, "Foxden")
+  category.ID = "Foxden"
   Settings.RegisterAddOnCategory(category)
 elseif InterfaceOptions_AddCategory then
   InterfaceOptions_AddCategory(panel)

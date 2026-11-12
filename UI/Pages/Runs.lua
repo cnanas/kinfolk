@@ -48,7 +48,7 @@ function page:Build(f)
   d.title = UI.Text(d, 20); d.title:SetPoint("TOPLEFT"); d.title:SetPoint("RIGHT", d, "RIGHT", -90, 0)
   d.sub = UI.Text(d, 11, C.dim); d.sub:SetPoint("TOPLEFT", d.title, "BOTTOMLEFT", 0, -6); d.sub:SetPoint("RIGHT", d, "RIGHT", -90, 0)
   d.delete = UI.Button(d, "Delete", 70, 24, function()
-    if selectedId and selectedId ~= "live" then StaticPopup_Show("KINFOLK_DELETE", nil, nil, selectedId) end
+    if selectedId and selectedId ~= "live" then StaticPopup_Show("FOXDEN_DELETE", nil, nil, selectedId) end
   end, "danger")
   d.delete:SetPoint("TOPRIGHT")
   d.viewTabs = {}
@@ -71,7 +71,7 @@ function page:Build(f)
     local pane = CreateFrame("Frame", nil, d)
     pane:SetPoint("TOPLEFT", 0, -VIEW_TOP); pane:SetPoint("BOTTOMRIGHT")
     local ok, err = pcall(view.Build, view, pane, 500, 380)
-    if not ok then geterrorhandler()("Kinfolk view " .. view.key .. ": " .. tostring(err)) end
+    if not ok then geterrorhandler()("Foxden view " .. view.key .. ": " .. tostring(err)) end
     d.panes[view.key] = pane
   end
   viewKey = viewKey or (ns.views[1] and ns.views[1].key)
@@ -85,7 +85,7 @@ function page:Layout(w, h)
   for _, view in ipairs(ns.views) do
     if view.Layout then
       local ok, err = pcall(view.Layout, view, dw, dh - VIEW_TOP)
-      if not ok then geterrorhandler()("Kinfolk view " .. view.key .. ": " .. tostring(err)) end
+      if not ok then geterrorhandler()("Foxden view " .. view.key .. ": " .. tostring(err)) end
     end
   end
 end
@@ -123,7 +123,7 @@ function page:Refresh(arg)
   for _, view in ipairs(ns.views) do
     if view.key == viewKey then
       local ok, err = pcall(view.Refresh, view, sel)
-      if not ok then geterrorhandler()("Kinfolk view " .. view.key .. ": " .. tostring(err)) end
+      if not ok then geterrorhandler()("Foxden view " .. view.key .. ": " .. tostring(err)) end
     end
   end
 end

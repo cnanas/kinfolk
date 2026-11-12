@@ -1,4 +1,4 @@
--- Kinfolk: stat tabs + ranked, class-colored bars. Shared by views and pages.
+-- Foxden: stat tabs + ranked, class-colored bars. Shared by views and pages.
 --   local p = ns.UI.StatPanel(parent, width, statKeys, maxBars)
 --   p:SetPanelWidth(w)   re-flow for a new width (tabs wrap when narrow)
 --   p:Set(statsByPlayer, combatSeconds, classOf, emptyText)

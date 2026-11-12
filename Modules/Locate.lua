@@ -6,11 +6,11 @@
 -- or raids (the game hides positions there anyway), or before you've answered
 -- the welcome popup. Turning sharing off tells guildmates to drop your dot.
 --
--- Messages (prefix "Kinfolk"): "L <uiMapID> <x 0-1000> <y 0-1000> <zone>" and "LX" (stopped sharing)
--- KinfolkDB.locations[charKey] = { map, x, y, zone, at }
+-- Messages (prefix "Foxden"): "L <uiMapID> <x 0-1000> <y 0-1000> <zone>" and "LX" (stopped sharing)
+-- FoxdenDB.locations[charKey] = { map, x, y, zone, at }
 
 local _, ns = ...
-local PREFIX = "Kinfolk"
+local PREFIX = "Foxden"
 local EVERY, HEARTBEAT, STALE = 30, 120, 300 -- send at most every 30s; resend every 2 min even if still; hide after 5 min
 local lastSent = { map = nil, x = -1, y = -1, at = 0 }
 
