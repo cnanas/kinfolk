@@ -56,7 +56,7 @@ function page:Build(f)
       local n = note(); if not n then return end
       local on = ns.TogglePin(n)
       if on == nil then ns.say("Add a location to this note first (outdoors), then it can be a map pin.", true)
-      else ns.say(on and "Shared as a guild map pin. Guildmates see it on their world map after your next sync." or "Guild map pin removed.") end
+      else ns.say(on and "Shared as a guild map pin. Guildmates see it on their world map after you log out." or "Guild map pin removed.") end
       self:Refresh()
     end),
     UI.Button(f, "Share in guild chat", 150, 26, function() local n = note(); if n then ns.NoteToGuild(n); self:Refresh() end end),
@@ -101,7 +101,7 @@ function page:Refresh()
   if shots > 0 then bits[#bits + 1] = shots .. (shots == 1 and " screenshot (in your Screenshots folder)" or " screenshots (in your Screenshots folder)") end
   if ns.IsPinned(n) then bits[#bits + 1] = "shared as a guild map pin" end
   if n.guildAt then bits[#bits + 1] = "shared in guild chat" end
-  if n.discord == "queued" then bits[#bits + 1] = "queued for Discord: posts on your next sync" end
+  if n.discord == "queued" then bits[#bits + 1] = "waiting for Discord: goes when you log out" end
   self.meta:SetText(table.concat(bits, "  ·  "))
   self.text:SetText((n.text or "") ~= "" and n.text or "|cff999fb0(no text)|r")
   self.body:SetHeight((self.text:GetStringHeight() or 20) + 10)

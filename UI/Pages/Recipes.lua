@@ -70,26 +70,26 @@ local function skillMap()
   return map
 end
 
--- Save a craft request; the companion sends it to the guild website on the next sync.
+-- Save a craft request and send it (ns.SendNow); the companion passes it to the guild website.
 function ns.RequestCraft(recipeID, itemID, name, qty)
   if not ns.db then return end
   ns.db.craftRequests = ns.db.craftRequests or {}
   local list = ns.db.craftRequests
   list[#list + 1] = { id = GetServerTime() .. "-" .. recipeID, recipe = recipeID, item = itemID, name = name, qty = qty or 1, at = GetServerTime(), char = ns.CharKey() }
   while #list > 30 do table.remove(list, 1) end
-  ns.say(string.format("Request saved: %dx %s. It goes to the guild website on your next sync; the crafter then tells you where to send the materials.", qty or 1, name))
   ns.Changed()
+  ns.SendNow(string.format("Request saved: %dx %s. The crafter then tells you where to send the materials.", qty or 1, name))
 end
 
--- Ask the whole guild (the website's crafting board); the companion posts it on the next sync.
+-- Ask the whole guild (the website's crafting board and Discord).
 function ns.AskBoard(itemID, name, qty)
   if not ns.db then return end
   ns.db.boardAsks = ns.db.boardAsks or {}
   local list = ns.db.boardAsks
   list[#list + 1] = { id = GetServerTime() .. "-" .. (itemID or 0), item = name, itemId = itemID, qty = qty or 1, char = ns.CharKey(), at = GetServerTime() }
   while #list > 30 do table.remove(list, 1) end
-  ns.say(string.format("Asked the guild for %dx %s. It goes on the website's crafting board (and Discord) on your next sync.", qty or 1, name))
   ns.Changed()
+  ns.SendNow(string.format("Asked the guild for %dx %s.", qty or 1, name))
 end
 
 local function whisper(to, item, name, qty, mats)
@@ -348,7 +348,7 @@ function page:ShowDetail(site, c)
     y = y - 22
     d.note:SetText("Estimated from the auction house" .. (site.pricesAt and site.pricesAt > 0 and (", prices from " .. ns.Ago(site.pricesAt)) or "") .. ". You bring these; the crafting itself is free.")
   else
-    d.note:SetText(site.mats and "No materials listed for this recipe." or "Click Sync to load materials and prices.")
+    d.note:SetText(site.mats and "No materials listed for this recipe." or "Materials and prices load when you log in with the companion app running.")
   end
   d.note:SetWidth(w); d.note:ClearAllPoints(); d.note:SetPoint("TOPLEFT", 14, y)
   y = y - (d.note:GetStringHeight() or 14) - 16
@@ -387,7 +387,7 @@ function page:ShowDetail(site, c)
   self.onWhisper = canWhisper and function() whisper(other, itemID, c[3], qty, mats) end or nil
   self.onAsk = function() ns.AskBoard(itemID, c[3], qty) end
 
-  if canRequest then d.hint:SetText("Request saves it for the guild website (sent on your next sync). The crafter accepts it, then you mail them the materials.")
+  if canRequest then d.hint:SetText("Request sends it to the guild website. The crafter accepts it, then you mail them the materials.")
   elseif canWhisper then d.hint:SetText(other .. " hasn't turned on craft requests, so ask them directly: Whisper sends a message with the materials you'll bring.")
   elseif m and #m.known > 0 then d.hint:SetText("Only your own characters know this recipe. Ask the guild puts it on the crafting board for any crafter to take.")
   else d.hint:SetText("Nobody in the guild is known to make this yet. Ask the guild puts it on the crafting board for any crafter to take.") end

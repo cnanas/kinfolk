@@ -1,6 +1,6 @@
 -- Foxden: notes. A small pop-out window to jot things down while you quest or level:
 -- text, where you are, and screenshots. Share a note in guild chat, or queue it for
--- Discord (the companion posts it with its screenshots on your next sync).
+-- Discord (the companion posts it with its screenshots; see ns.SendNow).
 -- /fox note opens it; the Notes tab in the window lists them all.
 --
 -- FoxdenDB.notes = { { id, at, char, text, loc = { zone, map, x, y }, shots = { localTime, ... },
@@ -121,7 +121,7 @@ function ns.NoteToDiscord(note)
   note.discord = "queued"
   note.discordAt = GetServerTime()
   ns.Changed()
-  ns.say("Queued for Discord. It posts on your next sync" .. ((note.shots and #note.shots > 0) and " with its screenshots." or "."))
+  ns.SendNow("Note saved for Discord" .. ((note.shots and #note.shots > 0) and " with its screenshots." or "."))
 end
 
 -- ---- the pop-out window ------------------------------------------------------------
@@ -207,7 +207,7 @@ local function build()
   discord:HookScript("OnEnter", function(self)
     GameTooltip:SetOwner(self, "ANCHOR_TOP")
     GameTooltip:SetText("Send to Discord")
-    GameTooltip:AddLine("The game can't reach Discord itself. The note is queued, and the companion app posts it, with its screenshots, on your next sync.", 1, 1, 1, true)
+    GameTooltip:AddLine("Posts the note, with its screenshots, to the guild Discord. Your screen reloads for a second so the companion app can pick it up.", 1, 1, 1, true)
     GameTooltip:Show()
   end)
   discord:HookScript("OnLeave", GameTooltip_Hide)

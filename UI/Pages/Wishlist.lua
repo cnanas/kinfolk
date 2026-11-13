@@ -1,6 +1,6 @@
 -- Page: Wishlist. The boss loot you've starred on the Dungeons pages, each marked main
 -- spec, off spec or transmog. Foxden reminds you at the boss and tells you when it drops;
--- guildmates see what you want after a sync.
+-- guildmates see what you want once it's sent.
 
 local _, ns = ...
 local UI = ns.UI
@@ -69,7 +69,7 @@ function page:Refresh()
   local has = #list > 0
   self.list:SetShown(has); self.intro:SetShown(has); self.empty:SetShown(not has)
   for _, hd in ipairs(self.head) do hd:SetShown(has) end
-  self.intro:SetText(#list .. (#list == 1 and " item" or " items") .. ". Foxden reminds you at the boss and tells you when one drops. Guildmates see your list after your next sync. Click a row to open its boss. Picks made on the guild website for a character named " .. (UnitName("player") or "you") .. " show up here too.")
+  self.intro:SetText(#list .. (#list == 1 and " item" or " items") .. ". Foxden reminds you at the boss and tells you when one drops. Guildmates see your list after you log out. Click a row to open its boss. Picks made on the guild website for a character named " .. (UnitName("player") or "you") .. " show up here too.")
   self.list:SetItems(list)
 end
 

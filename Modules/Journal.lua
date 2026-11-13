@@ -211,7 +211,7 @@ local function report(j)
   ns.say("  Loot tables: " .. (s.loot > 0 and ("YES, " .. s.loot .. " items") or "none in this client's journal"), true)
   ns.say("  Boss map pins: " .. (s.pins > 0 and ("YES, " .. s.pins) or "none"), true)
   if s.dungeons == 0 then ns.say("This game client has no journal data for addons; Foxden uses its own dungeon list and your guild's runs instead.", true)
-  else ns.say("Open /fox and pick Journal. Sync to send it to the website.", true) end
+  else ns.say("Open /fox and pick Journal. It goes to the website when you log out.", true) end
 end
 
 -- What the game's journal answers, step by step (for /fox journaltest).

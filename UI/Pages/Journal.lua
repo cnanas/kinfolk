@@ -154,7 +154,7 @@ local function detailText(e, boss)
       lines[#lines + 1] = "|cffffffff" .. (ROLE_TAG[t[3]] or "Everyone") .. ":|r " .. t[4] .. (t[5] and t[5] ~= "" and (dim .. "  (" .. t[5] .. ")|r") or "")
     end
   else
-    lines[#lines + 1] = dim .. "No tips yet. Guild members add them on the website's Journal page, then they show here after a sync.|r"
+    lines[#lines + 1] = dim .. "No tips yet. Guild members add them on the website's Journal page, then they show here the next time you log in.|r"
   end
 
   if j and #j.loot > 0 then
@@ -228,7 +228,8 @@ function page:Build(f)
   self.lfg = UI.Button(f, "I want to run this", 150, 24, function()
     if not selDungeon then return end
     local on = ns.ToggleLfg(ns.Slug(selDungeon))
-    ns.say(on and ("You're listed as wanting " .. selDungeon .. ". Guildmates see it after your next sync.") or ("You're no longer listed for " .. selDungeon .. "."))
+    if on then ns.SendNow("You're listed as wanting " .. selDungeon .. ".")
+    else ns.say("You're no longer listed for " .. selDungeon .. ".") end
     ns.RefreshUI()
   end)
   self.lfgWho = UI.Text(f, 11, C.dim); self.lfgWho:SetWordWrap(false)
@@ -610,7 +611,7 @@ function page:LayoutQuests(e)
   end
   for k = #quests + 1, #self.qblocks do self.qblocks[k]:Hide() end
   self.qempty:SetShown(#quests == 0)
-  self.qempty:SetText(ns.Site() and ns.Site().quests and "No quests listed for this dungeon." or "Quests come from your guild's website: start the companion and type /fox sync.")
+  self.qempty:SetText(ns.Site() and ns.Site().quests and "No quests listed for this dungeon." or "Quests come from your guild's website and load when you log in with the companion app running.")
   self.qnote:ClearAllPoints(); self.qnote:SetPoint("TOPLEFT", 0, -y); self.qnote:SetWidth(w); self.qnote:SetShown(#quests > 0)
   self.qbody:SetHeight(y + 60)
   local key = "q/" .. tostring(selDungeon)

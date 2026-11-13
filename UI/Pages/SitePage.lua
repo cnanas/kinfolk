@@ -3,7 +3,7 @@ local _, ns = ...
 local UI = ns.UI
 local C = UI.C
 
-ns.NO_SITE = "This needs your guild's website.\n\nStart the companion app and click Sync. Everything else in Foxden works without it."
+ns.NO_SITE = "This needs your guild's website.\n\nRun the companion app and log in again. Everything else in Foxden works without it."
 
 function UI.EmptyNote(parent)
   local t = UI.Text(parent, 13, C.dim, "CENTER")

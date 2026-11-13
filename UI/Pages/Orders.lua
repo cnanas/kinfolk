@@ -20,14 +20,14 @@ function page:Build(f)
     if o.board then
       r.name:SetText(o[3] .. "x " .. o[2] .. "  |cff999fb0crafting board|r")
       r.sub:SetText("For " .. (o.who or "?") .. (o.note and o.note ~= "" and (": " .. o.note) or "") .. ". Free: they bring the materials.")
-      r.status:SetText(o.status == "claimed" and ("Being made by " .. (o.by or "?")) or o.status == "sending" and "Goes out on your next sync" or "Open: take it on the website")
+      r.status:SetText(o.status == "claimed" and ("Being made by " .. (o.by or "?")) or o.status == "sending" and "Goes out when you log out" or "Open: take it on the website")
       if o.status == "open" then r.status:SetTextColor(UI.Accent()) else r.status:SetTextColor(unpack(C.dim)) end
       return
     end
     if o.mine then
       r.name:SetText(o[3] .. "x " .. o[2])
       r.sub:SetText("Your request, " .. date("%b %d, %H:%M", o.at))
-      r.status:SetText(o.sent and "Sent to the guild website" or "Goes out on your next sync")
+      r.status:SetText(o.sent and "Sent to the guild website" or "Goes out when you log out")
       r.status:SetTextColor(unpack(C.dim))
       return
     end
@@ -77,9 +77,9 @@ function page:Refresh()
   if nTheirs > 0 then
     self.intro:SetText(nTheirs .. (nTheirs == 1 and " open request" or " open requests") .. " for your characters, as of " .. date("%b %d, %H:%M", site.at) .. ". Free crafting: the requester mails you the materials.")
   elseif #mine > 0 then
-    self.intro:SetText("Your own requests are listed below. Requests guildmates make for your crafts show up here too, after a sync.")
+    self.intro:SetText("Your own requests are listed below. Requests guildmates make for your crafts show up here too.")
   else
-    self.intro:SetText("No open requests. Ask for a craft on the Recipes tab; requests guildmates make for your crafts show up here after a sync.")
+    self.intro:SetText("No open requests. Ask for a craft on the Recipes tab; requests guildmates make for your crafts show up here.")
   end
   self.list:SetItems(orders)
   local me = ns.CharKey and ns.CharKey()

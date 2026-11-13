@@ -201,7 +201,7 @@ function page:Refresh()
   table.sort(wanted, function(a, b) if #a.seekers ~= #b.seekers then return #a.seekers > #b.seekers end return a.name < b.name end)
   if #wanted == 0 then
     c.big:SetText("Nobody yet")
-    c.body:SetText("Open a dungeon and click \"I want to run this\". Guildmates see it after a sync, and Discord hears when three of you want the same one.")
+    c.body:SetText("Open a dungeon and click \"I want to run this\". Guildmates see it, and Discord hears when three of you want the same one.")
   else
     c.big:SetText(#wanted .. (#wanted == 1 and " dungeon wanted" or " dungeons wanted"))
     local lines = {}

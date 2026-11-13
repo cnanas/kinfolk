@@ -1,5 +1,11 @@
 # Foxden
 
+## 2.2.1
+
+- **Fixed:** errors on login about unknown events ("TRADE_SKILL_UPDATE", "LEARNED_SPELL_IN_TAB"). They also stopped recipe scanning and trainer tracking from working. Foxden now skips any event the game doesn't have.
+- **No more "sync":** notes, craft requests, "Ask the guild" and "I want to run this" send the moment you click (your screen reloads for a second so the companion app can post them). Everything else goes out by itself when you log out. Turn off **Send right away** in Settings to wait for logout instead.
+- The **Sync** button is now **Send now**, and `/fox send` does the same.
+
 ## 2.2.0
 
 A big one: a simpler window, every Forever dungeon with its bosses, quests and loot, a loot

@@ -107,7 +107,7 @@ ns.RegisterModule({
   events = {
     TRADE_SKILL_SHOW = function() soon() end,
     TRADE_SKILL_LIST_UPDATE = function() soon() end,
-    TRADE_SKILL_UPDATE = function() soon() end,
+    SKILL_LINES_CHANGED = function() soon() end,
   },
 })
 

@@ -2,7 +2,7 @@
 ## Title: Foxden
 ## Notes: Guild companion: dungeon run log, the dungeon journal, who can craft what, and the guild roster with optional location sharing.
 ## Author: Christian
-## Version: 2.2.0
+## Version: 2.2.1
 ## SavedVariables: FoxdenDB
 ## OptionalDeps: EllesmereUI
 ## X-License: GPL-3.0-or-later

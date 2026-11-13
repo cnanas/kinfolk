@@ -191,6 +191,7 @@ ns.RegisterModule({
       end)
     end,
     TRAINER_UPDATE = function() if button and button:IsShown() then C_Timer.After(0.1, updateButton) end end,
-    LEARNED_SPELL_IN_TAB = function() ns.Changed() end,
+    LEARNED_SPELL_IN_SKILL_LINE = function() ns.Changed() end,
+    LEARNED_SPELL_IN_TAB = function() ns.Changed() end, -- older clients
   },
 })

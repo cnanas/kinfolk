@@ -51,7 +51,7 @@ local open = UI.Button(panel, "Open dashboard", 130, 28, function()
   ns.ToggleWindow()
 end, "primary")
 open:SetPoint("TOPLEFT", intro, "BOTTOMLEFT", 0, -16)
-local sync = UI.Button(panel, "Sync to Discord", 130, 28, function() ns.Sync() end)
+local sync = UI.Button(panel, "Send now", 100, 28, function() ns.Sync() end)
 sync:SetPoint("LEFT", open, "RIGHT", 8, 0)
 
 -- status card
@@ -81,8 +81,8 @@ local r1 = add(UI.Toggle(panel, CONTENT_W, "Track dungeon runs",
   "Start a run automatically when you enter a dungeon.", get("track"), set("track")), s1, true)
 local r2 = add(UI.Toggle(panel, CONTENT_W, "Chat messages",
   "Say in chat when a run starts and when it's saved.", get("chat"), set("chat")), r1)
-local r3 = add(UI.Toggle(panel, CONTENT_W, "Sync reminder",
-  "Remind you to sync after each run so it reaches Discord.", get("remind"), set("remind")), r2)
+local r3 = add(UI.Toggle(panel, CONTENT_W, "Send right away",
+  "Notes, craft requests and group requests go out the moment you click (your screen reloads for a second). Off: they go when you log out.", get("sendNow"), set("sendNow")), r2)
 local r4 = add(UI.Toggle(panel, CONTENT_W, "Show the copy box after runs",
   "If you don't run the companion app: the run, ready to paste on the guild website.", get("copyPopup"), set("copyPopup")), r3)
 

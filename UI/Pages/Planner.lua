@@ -207,7 +207,7 @@ function page:Refresh()
   local nSkip = 0; for _ in pairs(skip) do nSkip = nSkip + 1 end
   self.reset:SetShown(nSkip > 0)
   if #steps == 0 then
-    self.summary:SetText("No recipe with known prices gives skill-ups at " .. from .. ". Try another starting skill, or sync for fresh prices.")
+    self.summary:SetText("No recipe with known prices gives skill-ups at " .. from .. ". Try another starting skill, or log in again later for fresh prices.")
   else
     local crafts = 0; for _, st in ipairs(steps) do crafts = crafts + st.crafts end
     self.summary:SetText(string.format("%s %d to %d: about %d crafts, %s of materials%s.%s", prof, from, reached, crafts, ns.MoneyPlain(math.floor(total + 0.5)),

@@ -10,7 +10,7 @@ local ADDON, ns = ...
 -- that owns the changed data to upgrade older runs in its Migrate hook.
 ns.SCHEMA = 3
 
-ns.DEFAULTS = { track = true, chat = true, remind = true, keep = 100, scale = 1, share = true, offer = false, shareLocation = true, welcomed = false, copyPopup = true, levelCard = true, shareLevelUps = true, guildDings = true, learnAll = true, levelScreenshot = false, tracker = true, minimapButton = true, rareAlerts = true }
+ns.DEFAULTS = { track = true, chat = true, remind = true, sendNow = true, keep = 100, scale = 1, share = true, offer = false, shareLocation = true, welcomed = false, copyPopup = true, levelCard = true, shareLevelUps = true, guildDings = true, learnAll = true, levelScreenshot = false, tracker = true, minimapButton = true, rareAlerts = true }
 ns.settings = setmetatable({}, { __index = ns.DEFAULTS }) -- replaced at load
 
 local db, run
@@ -92,7 +92,11 @@ function ns.RegisterModule(mod)
   for event in pairs(mod.events or {}) do
     if not handlers[event] then
       handlers[event] = {}
-      if not CORE_EVENTS[event] then frame:RegisterEvent(event) end
+      -- Skip events this client doesn't have (Forever runs the modern client; some classic names are gone).
+      if not CORE_EVENTS[event] then
+        local valid = not (C_EventUtils and C_EventUtils.IsEventValid) or C_EventUtils.IsEventValid(event)
+        if valid then pcall(frame.RegisterEvent, frame, event) end
+      end
     end
     table.insert(handlers[event], mod)
   end
@@ -193,8 +197,7 @@ local function finishRun(reason)
   saveRun(r, reason, GetServerTime())
   db.current, run = nil, nil
   fire("OnRunSaved", r)
-  say(string.format("Run saved: %s (%s).%s", r.dungeon, ns.UI and ns.UI.Time(r.duration) or r.duration .. "s",
-    ns.settings.remind and (ns.IsCourier and ns.IsCourier() and " Type /fox sync to send it to Discord." or "") or ""))
+  say(string.format("Run saved: %s (%s).", r.dungeon, ns.UI and ns.UI.Time(r.duration) or r.duration .. "s"))
   ns.Changed()
 end
 ns.FinishRun = finishRun
@@ -276,6 +279,20 @@ function ns.Sync()
   if InCombatLockdown() then say("Wait until combat ends.", true) else ReloadUI() end
 end
 
+-- Send something time-sensitive (a note, a craft request, a group request) right away.
+-- The game writes Foxden's data to disk only on a reload or logout, so "right away" is a
+-- quick reload; the companion app posts it within seconds. Without the companion, with
+-- "Send right away" off, or in combat, it waits until you log out.
+ns.LATER = "It goes out when you log out."
+function ns.SendNow(said)
+  if ns.settings.sendNow ~= false and ns.IsCourier and ns.IsCourier() and not InCombatLockdown() then
+    ReloadUI()
+    return true
+  end
+  say(said .. " " .. ns.LATER)
+  return false
+end
+
 -- status lines modules can add to /fox status: ns.statusLines[#+1] = function(run) return "..." end
 ns.statusLines = {}
 
@@ -290,7 +307,7 @@ SlashCmdList.FOXDEN = function(msg)
     if ns.OpenSettings then ns.OpenSettings() end
   elseif msg == "end" then
     if run then finishRun("ended manually") else say("No run in progress.", true) end
-  elseif msg == "sync" then
+  elseif msg == "sync" or msg == "send" then
     ns.Sync()
   elseif msg == "maptest" then
     if ns.MapTest then ns.MapTest() end
@@ -319,6 +336,6 @@ SlashCmdList.FOXDEN = function(msg)
       if ok and text then say(text, true) end
     end
   else
-    say("/fox (dashboard) · /fox options · /fox status · /fox end · /fox sync · /fox copy · /fox note · /fox trainer · /fox levelup · /fox maptest · /fox journaltest · /fox welcome", true)
+    say("/fox (dashboard) · /fox options · /fox status · /fox end · /fox send · /fox copy · /fox note · /fox trainer · /fox levelup · /fox maptest · /fox journaltest · /fox welcome", true)
   end
 end
