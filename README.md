@@ -70,4 +70,8 @@ Crafting through Foxden is free between guildmates: you bring the materials, a g
 
 ## License
 
-MIT. See `LICENSE`.
+Copyright (C) 2026 Christian.
+
+Foxden is free software under the GNU General Public License, version 3 or later (GPL-3.0-or-later). See `LICENSE`. Versions up to 2.1.0 were released under the MIT License.
+
+Foxden includes data from other open projects, listed in `THIRD-PARTY-NOTICES.md`.

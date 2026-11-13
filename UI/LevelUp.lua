@@ -154,6 +154,11 @@ end
 
 local toasts = {}
 function ns.ShowGuildDing(name, level, class)
+  ns.ShowGuildNote(string.format("|cff%s%s|r reached level %d%s", hex(UI.ClassColor(class)), name, level, level % 10 == 0 and "  |cff7fe3c4milestone|r" or ""))
+end
+
+-- A small note at the top of the screen (guild dings, rares spotted by guildmates).
+function ns.ShowGuildNote(text)
   local t = table.remove(toasts, 1)
   if not t then
     t = CreateFrame("Frame", nil, UIParent); t:SetSize(300, 34); t:SetFrameStrata("HIGH")
@@ -161,7 +166,7 @@ function ns.ShowGuildDing(name, level, class)
     local bar = t:CreateTexture(nil, "ARTWORK"); bar:SetSize(3, 34); bar:SetPoint("LEFT"); UI.Accented(bar)
     t.text = UI.Text(t, 13); t.text:SetPoint("LEFT", 14, 0)
   end
-  t.text:SetText(string.format("|cff%s%s|r reached level %d%s", hex(UI.ClassColor(class)), name, level, level % 10 == 0 and "  |cff7fe3c4milestone|r" or ""))
+  t.text:SetText(text)
   t:SetWidth(t.text:GetStringWidth() + 32)
   local shown = 0
   for _, o in ipairs(ns.dingToasts or {}) do if o:IsShown() then shown = shown + 1 end end

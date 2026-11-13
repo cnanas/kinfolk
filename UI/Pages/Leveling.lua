@@ -6,7 +6,7 @@ local UI = ns.UI
 local C = UI.C
 local PAD = 16
 
-local page = { key = "leveling", label = "Leveling", section = "char", order = 120 }
+local page = { key = "leveling", label = "Leveling", order = 120 }
 
 local function dur(s)
   if not s then return "—" end

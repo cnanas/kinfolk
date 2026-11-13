@@ -256,6 +256,189 @@ async function uploadLeveling(levels, dings, trainers) {
   }
 }
 
+// Where quests start and end (learned in game) -> website, shared with the guild.
+async function uploadQuestSpots(spots) {
+  if (!config.siteUrl || !config.siteKey || DRY || !spots) return;
+  const hash = createHash('sha256').update(JSON.stringify(spots)).digest('hex');
+  if (hash === craftState.questSpotsHash) return;
+  try {
+    const res = await fetch(`${config.siteUrl.replace(/\/$/, '')}/api/quests`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${config.siteKey}` }, body: JSON.stringify({ spots }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) { console.error(`Quest locations upload failed (${res.status}): ${data.error || 'no details'}`); return; }
+    craftState.questSpotsHash = hash; saveCraftState();
+    console.log(`Uploaded quest locations: ${data.saved} quest starts and turn-ins.`);
+  } catch (err) {
+    console.error(`Website unreachable for the quest locations upload (${err.message}).`);
+  }
+}
+
+// What each character shares with the guild: loot wishlist, dungeons they want to run,
+// map pins from notes -> website. Only when something changed.
+async function uploadMembers(member) {
+  if (!config.siteUrl || !config.siteKey || DRY || !member) return;
+  const hash = createHash('sha256').update(JSON.stringify(member)).digest('hex');
+  if (hash === craftState.memberHash) return;
+  try {
+    const res = await fetch(`${config.siteUrl.replace(/\/$/, '')}/api/member`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${config.siteKey}` }, body: JSON.stringify({ members: member }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) { console.error(`Wishlist upload failed (${res.status}): ${data.error || 'no details'}`); return; }
+    craftState.memberHash = hash; saveCraftState();
+    console.log(`Uploaded wishlists and "want to run" lists for ${data.saved} of your characters.`);
+  } catch (err) {
+    console.error(`Website unreachable for the wishlist upload (${err.message}).`);
+  }
+}
+
+// Item tooltips the addon read in game (for the website's hover cards) -> website.
+async function uploadItemTips(tips) {
+  if (!config.siteUrl || !config.siteKey || DRY || !tips) return;
+  const ids = Object.keys(tips);
+  if (!ids.length) return;
+  const hash = createHash('sha256').update(JSON.stringify(tips)).digest('hex');
+  if (hash === craftState.itemTipsHash) return;
+  let saved = 0;
+  try {
+    for (let i = 0; i < ids.length; i += 300) {
+      const chunk = Object.fromEntries(ids.slice(i, i + 300).map(id => [id, tips[id]]));
+      const res = await fetch(`${config.siteUrl.replace(/\/$/, '')}/api/items/tips`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${config.siteKey}` }, body: JSON.stringify({ tips: chunk }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) { console.error(`Item tooltip upload failed (${res.status}): ${data.error || 'no details'}`); return; }
+      saved += data.saved || 0;
+    }
+    craftState.itemTipsHash = hash; saveCraftState();
+    console.log(`Uploaded ${saved} item tooltips for the website's hover cards.`);
+  } catch (err) {
+    console.error(`Website unreachable for the item tooltip upload (${err.message}).`);
+  }
+}
+
+// Rare sightings and kills seen in game -> website (it learns respawn times from them).
+async function uploadRares(sightings, char) {
+  if (!config.siteUrl || !config.siteKey || DRY || !Array.isArray(sightings) || !sightings.length) return;
+  const last = craftState.raresAt || 0;
+  const fresh = sightings.filter(s => s && (s.at || 0) > last);
+  if (!fresh.length) return;
+  try {
+    const res = await fetch(`${config.siteUrl.replace(/\/$/, '')}/api/rares`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${config.siteKey}` },
+      body: JSON.stringify({ by: String(char || '').split('-')[0], sightings: fresh }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) { console.error(`Rare sightings upload failed (${res.status}): ${data.error || 'no details'}`); return; }
+    craftState.raresAt = Math.max(...fresh.map(s => s.at || 0)); saveCraftState();
+    console.log(`Uploaded ${data.saved} rare sightings.`);
+  } catch (err) {
+    console.error(`Website unreachable for the rare sightings upload (${err.message}).`);
+  }
+}
+
+// Asks for the guild's crafting board made in game -> website, once each.
+async function postBoardAsks(asks) {
+  if (!config.siteUrl || !config.siteKey || DRY || !Array.isArray(asks)) return;
+  craftState.sentAsks = craftState.sentAsks || [];
+  const fresh = asks.filter(a => a && a.id && !craftState.sentAsks.includes(a.id));
+  if (!fresh.length) return;
+  try {
+    const res = await fetch(`${config.siteUrl.replace(/\/$/, '')}/api/board`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${config.siteKey}` }, body: JSON.stringify({ posts: fresh }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) { console.error(`Crafting board post failed (${res.status}): ${data.error || 'no details'}`); return; }
+    for (const [i, a] of fresh.entries()) {
+      const r = (data.results || [])[i] || {};
+      if (r.error) console.error(`Crafting board: ${a.item}: ${r.error}`); else console.log(`Posted to the crafting board: ${a.qty || 1}x ${a.item}.`);
+    }
+    craftState.sentAsks = [...craftState.sentAsks, ...fresh.map(a => a.id)].slice(-200); saveCraftState();
+  } catch (err) {
+    console.error(`Website unreachable for the crafting board (${err.message}); it will be retried.`);
+  }
+}
+
+// Craft requests made in game (Recipes > Request) -> the website, once each.
+async function sendCraftRequests(requests) {
+  if (!config.siteUrl || !config.siteKey || DRY || !Array.isArray(requests)) return;
+  craftState.sentRequests = craftState.sentRequests || [];
+  for (const q of requests) {
+    if (!q || !q.id || craftState.sentRequests.includes(q.id)) continue;
+    const [name, realm] = String(q.char || '').split('-');
+    try {
+      const res = await fetch(`${config.siteUrl.replace(/\/$/, '')}/api/orders`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ recipeId: q.recipe, quantity: q.qty || 1, name, realm: realm || '', sameFaction: true, note: 'Requested in game with Foxden' }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) console.log(`Sent your craft request: ${q.qty || 1}x ${q.name}. Track it at ${data.url}`);
+      else console.error(`Craft request for ${q.name} wasn't accepted: ${data.error || res.status}`);
+      // a refusal (nobody offers it, limits) won't change by retrying; a network error will
+      craftState.sentRequests.push(q.id); craftState.sentRequests = craftState.sentRequests.slice(-200); saveCraftState();
+    } catch (err) {
+      console.error(`Website unreachable for your craft request (${err.message}); it will be retried.`);
+    }
+  }
+}
+
+// Notes queued for Discord in game (the note window's "Send to Discord") -> the webhook,
+// once each, with the screenshots taken for the note. Screenshots are matched by time:
+// the addon records when it took each one, and the game names the file by that time.
+function screenshotsFor(times) {
+  const root = config.savedVariablesFile.split(/[\\/]WTF[\\/]/)[0];
+  const dir = path.join(root, 'Screenshots');
+  if (!fs.existsSync(dir) || !Array.isArray(times) || !times.length) return [];
+  const files = fs.readdirSync(dir).filter(f => /\.(jpe?g|png|tga)$/i.test(f)).map(f => {
+    const full = path.join(dir, f); const st = fs.statSync(full);
+    return { full, name: f, at: st.mtimeMs / 1000, size: st.size };
+  });
+  const out = [];
+  for (const t of times.slice(0, 4)) {
+    const hit = files.filter(f => f.at >= t - 3 && f.at <= t + 20 && f.size < 8_000_000 && !out.includes(f)).sort((a, b) => a.at - b.at)[0];
+    if (hit && /\.(jpe?g|png)$/i.test(hit.name)) out.push(hit);
+  }
+  return out;
+}
+async function postNotes(notes) {
+  const hook = config.notesWebhookUrl || config.webhookUrl;
+  if (!hook || !Array.isArray(notes)) return;
+  craftState.postedNotes = craftState.postedNotes || {};
+  for (const n of notes) {
+    if (!n || n.discord !== 'queued' || !n.id) continue;
+    const stamp = `${n.discordAt || 0}`;
+    if (craftState.postedNotes[n.id] === stamp) continue;
+    const who = String(n.char || '').split('-')[0] || 'Someone';
+    const where = n.loc ? `${n.loc.zone || ''}${n.loc.x ? ` (${Math.round(n.loc.x)}, ${Math.round(n.loc.y)})` : ''}` : '';
+    const shots = screenshotsFor(n.shots);
+    const payload = {
+      username: config.botName || 'Foxden',
+      embeds: [{
+        title: `Note from ${who}`,
+        description: String(n.text || '').slice(0, 3500) || undefined,
+        color: 0xe4570b,
+        fields: where ? [{ name: 'Where', value: where, inline: true }] : undefined,
+        timestamp: new Date((n.at || Date.now() / 1000) * 1000).toISOString(),
+        image: shots[0] ? { url: `attachment://${shots[0].name}` } : undefined,
+      }],
+    };
+    if (DRY) { console.log(JSON.stringify(payload, null, 2), shots.map(s => s.name)); continue; }
+    try {
+      const form = new FormData();
+      form.append('payload_json', JSON.stringify(payload));
+      shots.forEach((sh, i) => form.append(`files[${i}]`, new Blob([fs.readFileSync(sh.full)]), sh.name));
+      const res = await fetch(hook, { method: 'POST', body: form });
+      if (!res.ok) { console.error(`Note for Discord failed (${res.status}): ${(await res.text()).slice(0, 200)}`); continue; }
+      craftState.postedNotes[n.id] = stamp; saveCraftState();
+      console.log(`Posted your note to Discord${shots.length ? ` with ${shots.length} screenshot${shots.length === 1 ? '' : 's'}` : ''}.`);
+      await sleep(800);
+    } catch (err) {
+      console.error(`Discord unreachable for your note (${err.message}); it will be retried.`);
+    }
+  }
+}
+
 // ---- Site data for the addon ----------------------------------------------
 // Craft requests and costs aren't in the game, so the companion writes them into
 // the addon folder as Lua; the addon reads it on the next /reload.
@@ -330,6 +513,13 @@ async function check() {
     await uploadJournal(db && db.journal);
     await uploadRoster(db && db.roster, db && db.locations, db && db.atlas);
     await uploadLeveling(db && db.levels, db && db.dings, db && db.trainers);
+    await uploadQuestSpots(db && db.questSpots);
+    await sendCraftRequests(db && db.craftRequests);
+    await uploadMembers(db && db.member);
+    await uploadItemTips(db && db.itemTips);
+    await uploadRares(db && db.rareSightings, db && db.member && Object.keys(db.member)[0]);
+    await postBoardAsks(db && db.boardAsks);
+    await postNotes(db && db.notes);
     await writeSiteData(db && db.crafting);
   } catch (err) {
     console.error('Unexpected error:', err);

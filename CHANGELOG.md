@@ -2,19 +2,48 @@
 
 ## 2.2.0
 
-- **Dungeon tracker:** a small window while you're in a dungeon: time inside, XP gained, gold looted, and the dungeon's bosses (grey until killed). Drag it anywhere; turn it off in Settings or with `/fox tracker`. XP and gold are saved with the run.
-- Cities that are instances (like Dalaran) are no longer logged as dungeons, and walking in and out without a fight isn't saved.
-- **Trainer page:** visit your class trainer once and Foxden keeps its whole list: what you can learn now, what's coming and at which level, and the cost. Right-click to skip an ability. A **Learn all** button at the trainer learns everything you haven't skipped.
-- **Level-up card:** your stat gains, how long the level took (and your fastest), what's new at your trainer, and guildmates near your level who are online. `/fox levelup` shows a preview.
-- **Guild dings:** guildmates with Foxden see a small note when you level up, and you see theirs. Both can be turned off in Settings.
-- **Leveling page:** every level-up Foxden recorded, with time and gains.
-- **Guild trainer lists:** if your guild has a website, trainer lists read by guildmates are shared, so you see your class list before your first trainer visit.
-- **Crafting is free:** no fee and no cash-on-delivery. You bring the materials, a guildmate makes it. The "Request" page (was Shop) shows roughly what the materials cost at the auction house, as a guide; "Orders" are now "Requests".
-- **Your runs reach the website even without the companion app.** Foxden hands finished runs to a guildmate who runs the companion, the next time you're both online. `/fox status` shows how many are waiting.
-- **Copy a run:** after each run, Foxden shows it ready to copy (Ctrl+C) and paste on your guild website's "Post a run" page. `/fox copy` opens it again; you can turn it off in Settings.
-- **Guild map on the website:** members who share their location show on a map of the continent on the guild website (signed-in members only), as of the last sync. Foxden reads where each zone sits so the site can draw it; no map images leave the game.
-- Guild messages are now paced to stay under the game's limit, so large recipe lists aren't cut short.
-- The Settings page scrolls on smaller screens.
+A big one: a simpler window, every Forever dungeon with its bosses, quests and loot, a loot
+wishlist, a rare tracker, crafting tools and notes.
+
+### A simpler window
+- Four places in the sidebar (**Home, Dungeons, Crafting, Guild**) with tabs, instead of eleven pages. It remembers the tab you used last.
+- A **search box** in the header finds any dungeon, boss, quest, loot item or recipe and jumps to it.
+- **Home** is about you: dungeons for your level with the quests you can still pick up, what's ready at your trainer, your recent runs, and guildmates online near your level.
+- Item and spell **tooltips everywhere** (hover any item; shift-click to link it), and a **minimap button** (click to open, right-click for Settings, shift-click for a note).
+
+### Dungeons
+- **Every Forever dungeon and raid**, including the nine new ones, with its full boss list (lists from ForeverDungeonRoutes, MIT). Scarlet Monastery, Blackrock Spire and Dire Maul show as one dungeon with their wings.
+- **Bosses:** the boss's model, its loot as real items, the guild's tips and record.
+- **Quests:** every dungeon quest with level, Alliance / Horde / both, objectives, rewards, and **map pins** for where to get it and turn it in. Quests show **Done** or **In your quest log**, and Foxden tells you what you haven't picked up when you walk in.
+- **Runs:** your guild's runs of that dungeon. Click **I want to run this** to tell guildmates; their wishes show on Home.
+- **Dungeon tracker** while you're inside: time, XP gained, gold looted, the bosses as portraits ticked off as you kill them, and how far ahead or behind the guild's best run you are.
+- What each boss drops in your runs is recorded, so the journal fills in as the guild plays.
+
+### Loot wishlist
+- Star any boss drop as **main spec, off spec or transmog**. Foxden reminds you at the boss, tells you when it drops, and takes it off the list when you get it. Guildmates see who wants what. Home has a Wishlist tab.
+
+### Rare tracker
+- Every rare and rare elite with its spawn points (Guild → Rares). Foxden notes when you see or kill one, tells guildmates with a note on screen, and shows when it may be up again from respawn times the guild learns or enters.
+
+### Crafting
+- **Recipes:** one list for every recipe with profession, category (pick several), show and sort dropdowns. Each recipe shows where it turns yellow and grey, coloured for your own skill. Pick one for each material's auction price and a total, who can make it, and **Request**, **Whisper** or **Ask the guild**.
+- **Leveling planner:** the cheapest way to level a profession at today's prices, with a shopping list that leaves out what's in your bags and bank.
+- **Crafting is free:** no fees and no cash-on-delivery. You bring the materials, a guildmate makes it.
+
+### Leveling and trainer
+- **Trainer:** visit your class trainer once and Foxden keeps its whole list (what's ready, what's coming, the cost). Right-click to skip an ability; **Learn all** at the trainer learns the rest.
+- **Level-up card** with your gains, how long the level took and what's new at your trainer; guildmates see a note when you ding. Every level-up is listed on the Leveling page.
+
+### Notes
+- `/fox note` opens a small note window to keep beside you: write, add where you are, take a screenshot. Share it in guild chat, send it to Discord with its screenshots (through the companion), or share its spot as a **guild map pin**.
+
+### Guild
+- **Roster map:** guildmates who share their location show on a map of the continent, at the last place they were seen.
+- Your runs reach the guild website even without the companion app: Foxden hands them to a guildmate who runs it. `/fox copy` gives a run to paste on the website.
+
+### Also
+- Foxden is now **GPL-3.0-or-later** (it was MIT), so it can include data from other open projects; see THIRD-PARTY-NOTICES.md.
+- Visits to a dungeon with no fight aren't saved. Guild messages are paced to stay under the game's limit. Windows are solid, and the Settings page scrolls.
 
 ## 2.1.0
 

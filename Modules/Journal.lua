@@ -115,19 +115,32 @@ local function pinsOn(floorList)
   return byEncounter
 end
 
+-- The journal's data only loads with Blizzard's journal module, which the game loads
+-- the first time you open the journal window. Load it ourselves before reading.
+local function loadJournal()
+  local loaded = C_AddOns and C_AddOns.IsAddOnLoaded and C_AddOns.IsAddOnLoaded("Blizzard_EncounterJournal")
+  if not loaded and C_AddOns and C_AddOns.LoadAddOn then pcall(C_AddOns.LoadAddOn, "Blizzard_EncounterJournal")
+  elseif not loaded and LoadAddOn then pcall(LoadAddOn, "Blizzard_EncounterJournal") end
+end
+
 -- Every dungeon (not raid) in every tier, as { id, tier } pairs.
 local function listDungeons()
+  loadJournal()
   local list, seen = {}, {}
   local okT, tiers = call(EJ_GetNumTiers)
   tiers = okT and tonumber(tiers) or 1
+  local okC, original = call(EJ_GetCurrentTier)
   for tier = 1, math.max(1, tiers) do
     call(EJ_SelectTier, tier)
-    for i = 1, 200 do
+    local okN, n = call(EJ_GetNumInstances, false)
+    n = okN and tonumber(n) or nil
+    for i = 1, n or 200 do
       local ok, id, name = call(EJ_GetInstanceByIndex, i, false)
       if not ok or not id then break end
       if not seen[id] then seen[id] = true; list[#list + 1] = { id = id, name = name, tier = tier } end
     end
   end
+  if okC and tonumber(original) then call(EJ_SelectTier, tonumber(original)) end
   return list
 end
 
@@ -154,6 +167,7 @@ end
 -- Scan one dungeon per tick so the game doesn't stall.
 function ns.ScanJournal(onDone)
   if scanning then return end
+  loadJournal()
   if not (EJ_GetInstanceByIndex and EJ_SelectInstance and EJ_GetEncounterInfoByIndex) then
     ns.say("This client has no Encounter Journal for addons to read.", true)
     return
@@ -196,11 +210,41 @@ local function report(j)
   ns.say("  Abilities: " .. (s.sections > 0 and ("YES, " .. s.sections .. " entries") or "none in this client's journal"), true)
   ns.say("  Loot tables: " .. (s.loot > 0 and ("YES, " .. s.loot .. " items") or "none in this client's journal"), true)
   ns.say("  Boss map pins: " .. (s.pins > 0 and ("YES, " .. s.pins) or "none"), true)
-  ns.say("Open /fox and pick Journal. Sync to send it to the website.", true)
+  if s.dungeons == 0 then ns.say("This game client has no journal data for addons; Foxden uses its own dungeon list and your guild's runs instead.", true)
+  else ns.say("Open /fox and pick Journal. Sync to send it to the website.", true) end
+end
+
+-- What the game's journal answers, step by step (for /fox journaltest).
+local function diagnose()
+  loadJournal()
+  local loaded = C_AddOns and C_AddOns.IsAddOnLoaded and C_AddOns.IsAddOnLoaded("Blizzard_EncounterJournal")
+  local okT, tiers = call(EJ_GetNumTiers)
+  local okC, cur = call(EJ_GetCurrentTier)
+  ns.say(string.format("  Journal module loaded: %s. Tiers: %s, current %s.", tostring(loaded), tostring(okT and tiers), tostring(okC and cur)), true)
+  for tier = 1, math.min(3, tonumber(okT and tiers) or 1) do
+    call(EJ_SelectTier, tier)
+    local okN, n = call(EJ_GetNumInstances, false)
+    local okR, nr = call(EJ_GetNumInstances, true)
+    local names = {}
+    for i = 1, 4 do
+      local ok, id, name = call(EJ_GetInstanceByIndex, i, false)
+      if ok and id then names[#names + 1] = tostring(name) .. "#" .. tostring(id) end
+    end
+    ns.say(string.format("  Tier %d: %s dungeons, %s raids. First: %s", tier, tostring(okN and n), tostring(okR and nr), #names > 0 and table.concat(names, ", ") or "none"), true)
+  end
+  local okM, map = call(C_Map.GetBestMapForUnit, "player")
+  local okJ, here = call(EJ_GetInstanceForMap, okM and map or 0)
+  ns.say(string.format("  This map %s is journal instance %s.", tostring(okM and map), tostring(okJ and here)), true)
+  if okJ and tonumber(here) and here > 0 then
+    call(EJ_SelectInstance, here)
+    local ok, bname = call(EJ_GetEncounterInfoByIndex, 1, here)
+    ns.say("  Its first boss: " .. tostring(ok and bname), true)
+  end
 end
 
 function ns.JournalTest()
   ns.say("Reading the game's Encounter Journal…", true)
+  pcall(diagnose)
   ns.ScanJournal(report)
 end
 
@@ -212,7 +256,7 @@ ns.RegisterModule({
       C_Timer.After(25, function()
         local j = ns.db and ns.db.journal
         local build = select(2, GetBuildInfo())
-        if not j or j.build ~= build or GetServerTime() - (j.scannedAt or 0) > 7 * 86400 then ns.ScanJournal() end
+        if not j or j.build ~= build or #(j.dungeons or {}) == 0 or GetServerTime() - (j.scannedAt or 0) > 7 * 86400 then ns.ScanJournal() end
       end)
     end,
   },

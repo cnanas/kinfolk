@@ -89,7 +89,13 @@ local r4 = add(UI.Toggle(panel, CONTENT_W, "Show the copy box after runs",
 local r5 = add(UI.Toggle(panel, CONTENT_W, "Dungeon tracker",
   "A small window in dungeons: time inside, XP gained, gold looted and which bosses are down.", get("tracker"), function(v) ns.settings.tracker = v; if ns.RefreshTracker then ns.RefreshTracker() end end), r4)
 
-local sL = section("Leveling", r5)
+local r6 = add(UI.Toggle(panel, CONTENT_W, "Minimap button",
+  "A Foxden button on the minimap (or in your minimap button bar): click to open, right-click for settings.", get("minimapButton"), function(v) ns.settings.minimapButton = v; if ns.RefreshMinimapButton then ns.RefreshMinimapButton() end end), r5)
+
+local r7 = add(UI.Toggle(panel, CONTENT_W, "Rare alerts",
+  "Tell guildmates when you find a rare, and show a note when they find one.", get("rareAlerts"), set("rareAlerts")), r6)
+
+local sL = section("Leveling", r7)
 local rL1 = add(UI.Toggle(panel, CONTENT_W, "Show the level-up card",
   "Your gains, how long the level took, what's new at your trainer and guildmates near your level.", get("levelCard"), set("levelCard")), sL, true)
 local rL2 = add(UI.Toggle(panel, CONTENT_W, "Tell the guild when I level up",
@@ -132,7 +138,7 @@ add(UI.Stepper(panel, CONTENT_W, "Dashboard scale", "Size of everything in the /
 
 function ns.RefreshSettings()
   for _, r in ipairs(rows) do r:Refresh() end
-  local run = ns.GetCurrentRun and ns.GetCurrentRun()
+  local run = ns.LiveRun and ns.LiveRun()
   local count = ns.GetRuns and #ns.GetRuns() or 0
   if run then
     dot:SetColorTexture(UI.Accent())

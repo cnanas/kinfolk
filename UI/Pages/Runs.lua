@@ -6,12 +6,12 @@ local UI = ns.UI
 local C = UI.C
 local LIST_W, PAD, VIEW_TOP = 260, 16, 84
 
-local page = { key = "runs", label = "Runs", section = "log", order = 20 }
+local page = { key = "runs", label = "All runs", order = 20 }
 local selectedId, viewKey
 
 local function entries()
   local list = {}
-  local live = ns.GetCurrentRun()
+  local live = ns.LiveRun()
   if live then list[1] = { run = live, live = true, id = "live" } end
   local runs = ns.GetRuns()
   for i = #runs, 1, -1 do list[#list + 1] = { run = runs[i], id = runs[i].id } end

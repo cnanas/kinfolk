@@ -6,7 +6,7 @@ local UI = ns.UI
 local C = UI.C
 local LIST_W, PAD = 240, 16
 
-local page = { key = "crafters", label = "Crafters", section = "craft", order = 70 }
+local page = { key = "crafters", label = "Crafters", order = 70 }
 local selected
 
 local function crafterList()
@@ -44,9 +44,10 @@ function page:Build(f)
   self.title = UI.Text(f, 20)
   self.sub = UI.Text(f, 12, C.dim)
   self.recipes = UI.List(f, 28, function(r)
-    r.name = UI.Text(r, 12); r.name:SetPoint("LEFT", 12, 0)
+    UI.ItemRow(r, 12)
+    r.name = UI.Text(r, 12); r.name:SetPoint("LEFT", 40, 0)
     r.prof = UI.Text(r, 11, C.dim, "RIGHT"); r.prof:SetPoint("RIGHT", -12, 0)
-  end, function(r, x) r.name:SetText(x.name); r.prof:SetText(x.prof) end)
+  end, function(r, x) r.name:SetText(UI.SetRowItem(r, x.item, x.spell, x.name)); r.prof:SetText(x.prof) end)
   self.empty = UI.EmptyNote(f)
 end
 
@@ -77,7 +78,7 @@ function page:Refresh()
     bits[#bits + 1] = string.format("%s %s%s (%d recipes)", prof, tostring(d.skill or "?"), d.maxSkill and ("/" .. d.maxSkill) or "", #(d.recipes or {}))
     for _, r in ipairs(d.recipes or {}) do
       local name = r.name or (r.item and (names[r.item] or (C_Item and C_Item.GetItemNameByID and C_Item.GetItemNameByID(r.item)) or (GetItemInfo and GetItemInfo(r.item))))
-      recipes[#recipes + 1] = { name = name or (r.item and ("Item " .. r.item)) or "Recipe", prof = prof }
+      recipes[#recipes + 1] = { name = name or (r.item and ("Item " .. r.item)) or "Recipe", prof = prof, item = r.item, spell = r.spell }
     end
   end
   table.sort(bits)

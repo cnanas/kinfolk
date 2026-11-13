@@ -7,7 +7,7 @@ local UI = ns.UI
 local C = UI.C
 local PAD = 16
 
-local page = { key = "trainer", label = "Trainer", section = "char", order = 110 }
+local page = { key = "trainer", label = "Trainer", order = 15 }
 local view = "ready"
 local LABEL = { ready = "Ready", soon = "Coming up", known = "Learned", skipped = "Skipped" }
 
@@ -17,7 +17,7 @@ function page:Build(f)
   self.chips = UI.Chips(f, function(v) view = v; self:Refresh() end)
   self.list = UI.List(f, 34, function(r)
     r:RegisterForClicks("RightButtonUp")
-    r.icon = r:CreateTexture(nil, "ARTWORK"); r.icon:SetSize(20, 20); r.icon:SetPoint("LEFT", 12, 0)
+    UI.ItemRow(r, 12)
     r.name = UI.Text(r, 12); r.name:SetPoint("LEFT", 40, 0)
     r.status = UI.Text(r, 11, C.dim, "RIGHT")
     r.level = UI.Text(r, 12, C.dim, "RIGHT")
@@ -26,7 +26,8 @@ function page:Build(f)
   end, function(r, s)
     r.spell = s
     local w = self.list:GetWidth()
-    r.icon:SetTexture(s.icon or 134400)
+    r.itemID, r.spellID, r.tipName, r.showMats = nil, s.id, s.name, false
+    r.icon:SetTexture(s.icon or (s.id and C_Spell and C_Spell.GetSpellTexture and C_Spell.GetSpellTexture(s.id)) or 134400)
     r.icon:SetDesaturated(s.status == "known" or s.status == "skipped")
     r.name:SetText(s.name .. (s.rank and ("  |cff999fb0" .. s.rank .. "|r") or "")); r.name:SetWidth(w * 0.5)
     r.name:SetTextColor(unpack((s.status == "known" or s.status == "skipped") and C.faint or C.text))

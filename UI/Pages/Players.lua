@@ -6,7 +6,7 @@ local C = UI.C
 local LIST_W, PAD = 240, 16
 local ROLE = { TANK = "Tank", HEALER = "Healer", DAMAGER = "DPS" }
 
-local page = { key = "players", label = "Players", section = "log", order = 40 }
+local page = { key = "players", label = "Players", order = 140 }
 local selected
 
 function page:Build(f)

@@ -10,7 +10,7 @@ local ADDON, ns = ...
 -- that owns the changed data to upgrade older runs in its Migrate hook.
 ns.SCHEMA = 3
 
-ns.DEFAULTS = { track = true, chat = true, remind = true, keep = 100, scale = 1, share = true, offer = false, shareLocation = true, welcomed = false, copyPopup = true, levelCard = true, shareLevelUps = true, guildDings = true, learnAll = true, levelScreenshot = false, tracker = true }
+ns.DEFAULTS = { track = true, chat = true, remind = true, keep = 100, scale = 1, share = true, offer = false, shareLocation = true, welcomed = false, copyPopup = true, levelCard = true, shareLevelUps = true, guildDings = true, learnAll = true, levelScreenshot = false, tracker = true, minimapButton = true, rareAlerts = true }
 ns.settings = setmetatable({}, { __index = ns.DEFAULTS }) -- replaced at load
 
 local db, run
@@ -125,10 +125,13 @@ local function prune()
 end
 ns.Prune = prune
 
--- Is this instance a real dungeon? true / false / nil (can't tell yet). Some places,
--- like Dalaran on Forever, are 5-player instances but not dungeons; the game's
--- dungeon journal knows the difference.
-local function isDungeon(name)
+-- Is this instance a real dungeon? true / false / nil (can't tell). Only the game's
+-- dungeon journal can say "no", and on Forever it's empty, so every 5-player instance
+-- counts (City of Dalaran is a real dungeon there). Visits without a fight aren't kept.
+local NOT_DUNGEON = {}
+local function isDungeon(name, instanceID)
+  if NOT_DUNGEON[instanceID] then return false end
+  if ns.Dungeons and ns.Dungeons[instanceID] then return true end -- Data/Dungeons.lua
   local okM, map = pcall(C_Map.GetBestMapForUnit, "player")
   if EJ_GetInstanceForMap and okM and type(map) == "number" and not ns.IsSecret(map) then
     local okJ, jid = pcall(EJ_GetInstanceForMap, map)
@@ -145,7 +148,7 @@ end
 
 local function startRun(name, difficultyName, instanceID)
   local now = GetServerTime()
-  local dungeon = isDungeon(name)
+  local dungeon = isDungeon(name, instanceID)
   run = {
     id = string.format("%d-%s", now, tostring(instanceID)),
     schema = ns.SCHEMA,
@@ -200,7 +203,13 @@ local function checkZone()
   local name, instanceType, _, difficultyName, _, _, _, instanceID = GetInstanceInfo()
   if instanceType == "party" then
     if run and run.instanceID ~= instanceID then finishRun("changed dungeon") end
-    if not run and ns.settings.track then startRun(name, difficultyName, instanceID) end
+    if not run and ns.settings.track then startRun(name, difficultyName, instanceID)
+    elseif run then
+      -- re-check (a run resumed after /reload may have been judged by an older version)
+      local was = run._notDungeon
+      run._notDungeon = isDungeon(name, instanceID) == false or nil
+      if was ~= run._notDungeon and ns.RefreshTracker then ns.RefreshTracker() end
+    end
   elseif run then
     finishRun("left dungeon")
   end
@@ -251,6 +260,8 @@ for event in pairs(CORE_EVENTS) do frame:RegisterEvent(event) end
 -- ---- public API ------------------------------------------------------------
 
 function ns.GetCurrentRun() return run end
+-- the run to show in Foxden's pages: not a city visit that only looked like a dungeon
+function ns.LiveRun() return run and not run._notDungeon and run or nil end
 function ns.GetRuns() return db and db.runs or {} end
 
 function ns.DeleteRun(id)
@@ -285,6 +296,10 @@ SlashCmdList.FOXDEN = function(msg)
     if ns.MapTest then ns.MapTest() end
   elseif msg == "levelup" then
     if ns.ShowLevelUp then ns.ShowLevelUp(UnitLevel("player"), { str = 3, agi = 2, sta = 4, int = 1, spi = 1, hp = 22, mp = 30 }, 2700, true) end
+  elseif msg == "note" or msg == "notes" then
+    if ns.ToggleNote then ns.ToggleNote() end
+  elseif msg == "note new" then
+    if ns.OpenNote and ns.NewNote then ns.OpenNote(ns.NewNote()) end
   elseif msg == "tracker" then
     ns.settings.tracker = ns.settings.tracker == false
     say("Dungeon tracker " .. (ns.settings.tracker and "on." or "off."), true)
@@ -304,6 +319,6 @@ SlashCmdList.FOXDEN = function(msg)
       if ok and text then say(text, true) end
     end
   else
-    say("/fox (dashboard) · /fox options · /fox status · /fox end · /fox sync · /fox copy · /fox trainer · /fox levelup · /fox maptest · /fox journaltest · /fox welcome", true)
+    say("/fox (dashboard) · /fox options · /fox status · /fox end · /fox sync · /fox copy · /fox note · /fox trainer · /fox levelup · /fox maptest · /fox journaltest · /fox welcome", true)
   end
 end
